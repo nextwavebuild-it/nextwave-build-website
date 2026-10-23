@@ -1,1 +1,60 @@
-export default function Footer(){return (<footer className="footer"><div className="shell"><div className="footgrid"><div><a href="#home" className="brand"><img loading="lazy" src="/assets/logo.svg" alt="NextWave" /><span>NextWave <span>Build</span></span></a><p>Don't just learn it, build it. Practical skills, real projects and mentor support.</p></div><div><h4>Explore</h4><a href="#flagships">Flagships</a><a href="#how">How it works</a><a href="#why">About</a><a href="#contact">Contact</a></div><div><h4>Next steps</h4><a href="https://portal.nextwavebuild.com/register">Register</a><a href="https://portal.nextwavebuild.com/">Sign in</a><a href="mailto:support@nextwavebuild.com">Support</a></div><div><h4>Information</h4><a href="https://nextwavebuild.com/">Our website</a><a href="https://nextwavebuild.com/documents/privacy-policy.pdf">Privacy policy</a><a href="https://nextwavebuild.com/documents/terms-of-use.pdf">Terms of use</a></div></div><div className="end"><span>© 2026 NextWave Build. All rights reserved.</span><span>Learn. Practise. Build.</span></div></div></footer>);}
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <div className="shell">
+        <div className="footgrid">
+          <div>
+            <a href="#home" className="brand" aria-label="NextWave Build home">
+              <img
+                loading="lazy"
+                src="/logo-color.png"
+                alt=""
+                width={44}
+                height={44}
+              />
+              <span>
+                NextWave <span>Build</span>
+              </span>
+            </a>
+
+            <p>
+              Don&apos;t just learn it, build it. Practical skills, real
+              projects and mentor support.
+            </p>
+          </div>
+
+          <div>
+            <h4>Explore</h4>
+            <a href="#flagships">Flagships</a>
+            <a href="#how">How it works</a>
+            <a href="#why">About</a>
+            <a href="#contact">Contact</a>
+          </div>
+
+          <div>
+            <h4>Next steps</h4>
+            <a href="https://portal.nextwavebuild.com/register">Register</a>
+            <a href="https://portal.nextwavebuild.com/">Sign in</a>
+            <a href="mailto:support@nextwavebuild.com">Support</a>
+          </div>
+
+          <div>
+            <h4>Information</h4>
+            <a href="https://nextwavebuild.com/">Our website</a>
+            <a href="https://nextwavebuild.com/documents/privacy-policy.pdf">
+              Privacy policy
+            </a>
+            <a href="https://nextwavebuild.com/documents/terms-of-use.pdf">
+              Terms of use
+            </a>
+          </div>
+        </div>
+
+        <div className="end">
+          <span>© 2026 NextWave Build. All rights reserved.</span>
+          <span>Learn. Practise. Build.</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
