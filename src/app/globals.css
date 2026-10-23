@@ -946,14 +946,18 @@ section {
 }
 
 .brand img {
-  width: 180px;
-  height: auto;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
   object-fit: contain;
+  border-radius: 9px;
 }
 
 @media (max-width: 460px) {
   .brand img {
-    width: 145px;
-    height: auto;
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    border-radius: 7px;
   }
 }
