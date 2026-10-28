@@ -961,3 +961,246 @@ section {
     border-radius: 7px;
   }
 }
+
+/* ============================================
+   NEXTWAVE CUSTOM LANGUAGE TRANSLATOR
+   DARK THEME
+============================================ */
+
+/* Translator wrapper */
+.language-translator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 1000;
+  font-family: inherit;
+}
+
+/* Main language button */
+.language-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  width: 160px;
+  min-height: 44px;
+  padding: 9px 13px;
+
+  background: #101214;
+  color: #ffffff;
+
+  border: 1px solid #343a40;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Hover and active state */
+.language-trigger:hover,
+.language-trigger.active {
+  border-color: #d9fe66;
+  background: #222629;
+}
+
+.language-trigger:focus-visible {
+  outline: 2px solid #d9fe66;
+  outline-offset: 3px;
+}
+
+.language-trigger:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+/* ============================================
+   COUNTRY FLAGS
+============================================ */
+
+.language-flag {
+  display: block;
+  width: 26px;
+  height: 20px;
+  min-width: 26px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* Language label */
+.language-name {
+  flex: 1;
+  color: #ffffff;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Dropdown arrow */
+.language-chevron {
+  flex-shrink: 0;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.language-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* ============================================
+   DROPDOWN PANEL — OPENS DOWNWARD
+============================================ */
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  bottom: auto;
+  right: 0;
+  left: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 160px;
+  height: auto;
+  max-height: none;
+
+  padding: 5px;
+
+  background: #101214;
+  border: 1px solid #343a40;
+  border-radius: 10px;
+
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  overflow: visible;
+  z-index: 9999;
+}
+
+/* ============================================
+   LANGUAGE OPTIONS
+============================================ */
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 10px;
+
+  background: transparent;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Hover effect */
+.language-option:hover {
+  background: #222629;
+  color: #ffffff;
+}
+
+/* Currently selected language */
+.language-option.selected {
+  background: rgba(0, 201, 183, 0.13);
+  color: #d9fe66;
+  font-weight: 600;
+}
+
+.language-option.selected .language-name {
+  color: #d9fe66;
+}
+
+/* Keyboard accessibility */
+.language-option:focus-visible {
+  outline: 2px solid #d9fe66;
+  outline-offset: -2px;
+}
+
+/* Active checkmark */
+.language-check {
+  margin-left: auto;
+  color: #d9fe66;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ============================================
+   HIDDEN GTRANSLATE ENGINE
+============================================ */
+
+.gtranslate_engine {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Allow dropdown to extend below the header */
+.nav,
+.navrow,
+.navend {
+  overflow: visible;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+============================================ */
+
+@media (max-width: 768px) {
+  .language-trigger {
+    width: 122px;
+    min-height: 38px;
+    gap: 6px;
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .language-flag {
+    width: 22px;
+    height: 17px;
+    min-width: 22px;
+  }
+
+  .language-menu {
+    width: 145px;
+    right: 0;
+  }
+
+  .language-option {
+    font-size: 12px;
+    min-height: 40px;
+  }
+
+  .language-chevron {
+    width: 14px;
+    height: 14px;
+  }
+}
