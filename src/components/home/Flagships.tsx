@@ -5,16 +5,16 @@ const programmes = [
     number: "01",
     title: "E-Commerce & Dropshipping",
     description:
-      "Learn how online stores work, then build a practice store of your own.",
+      "Learn how to launch and manage an online store through live, mentor-led sessions. Understand product research, store setup, supplier selection, marketing fundamentals and order management. Build your own practice store with guidance from your mentor, then receive feedback to improve it.",
     image: "/assets/E-Commerce-Dropshipping.webp",
     alt: "Online store illustration",
-    price: "$400",
+    price: "$499",
   },
   {
     number: "02",
     title: "Freelancing & Online Work",
     description:
-      "Turn a skill into a service, with a portfolio and proposals to match.",
+      "Learn how to turn your skills into services through live mentor-led training. Explore freelancing platforms, building a professional portfolio, writing proposals, communicating with clients and managing projects. Create your own portfolio and practise client-style assignments, with constructive feedback from your mentor.",
     image: "/assets/FREELANCER.webp",
     alt: "Creative portfolio illustration",
     price: "$499",
@@ -23,7 +23,7 @@ const programmes = [
     number: "03",
     title: "Technology & AI",
     description:
-      "Learn tech foundations and practical ways to use AI in real projects.",
+      "Discover practical technology and AI skills through interactive, mentor-led sessions. Learn technology fundamentals, useful AI tools, prompt writing, automation concepts and practical applications. Work on your own technology or AI-based project while your mentor provides guidance, troubleshooting support and feedback.",
     image: "/assets/AI-Learning-Workspace.webp",
     alt: "Technology project illustration",
     price: "$799",

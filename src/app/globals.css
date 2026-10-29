@@ -3311,3 +3311,65 @@ section {
     font-size: 10px;
   }
 }
+
+/* ==========================================
+   NEXTWAVE — AUTO-ACTIVE METHOD CARDS
+========================================== */
+
+.method-track {
+  align-items: stretch;
+}
+
+.method-box {
+  position: relative;
+  transform: scale(1);
+  transform-origin: center;
+  transition:
+    background-color 450ms ease,
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 450ms ease;
+}
+
+/* Automatically highlighted card */
+.method-box.method-box-active {
+  background: var(--acid);
+  transform: scale(1.035);
+  z-index: 2;
+
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.13);
+}
+
+/* Highlighted card number */
+.method-box.method-box-active .num {
+  color: #172015;
+  transition: color 350ms ease;
+}
+
+/* Manual hover */
+@media (hover: hover) and (pointer: fine) {
+  .method-box:hover {
+    background: var(--acid);
+    transform: scale(1.035);
+    z-index: 3;
+  }
+
+  .method-box:hover .num {
+    color: #172015;
+  }
+}
+
+/* Mobile: use subtle expansion */
+@media (max-width: 768px) {
+  .method-box.method-box-active {
+    transform: scale(1.015);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .method-box,
+  .method-box.method-box-active {
+    transition: none;
+    transform: none;
+  }
+}

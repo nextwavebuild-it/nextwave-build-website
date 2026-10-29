@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NextWave Build — Don't just learn it. Build it.",
+  title: "NextWave Build - Don't just learn it. Build it.",
   description:
     "Practical skills, real projects and mentor support. Explore E-commerce, Freelancing, and Technology & AI with NextWave Build.",
   icons: {
