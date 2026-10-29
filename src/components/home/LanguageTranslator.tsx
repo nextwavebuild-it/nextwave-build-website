@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+import Image from "next/image";
 
 type Language = "en" | "ar";
 
@@ -28,13 +30,95 @@ const languages = [
 ];
 
 const SCRIPT_ID = "nextwave-gtranslate-script";
+const SCRIPT_URL = "https://cdn.gtranslate.net/widgets/latest/float.js";
+
+const SCRIPT_EVENT = "nextwave-gtranslate-ready";
+
+/* ==========================================
+   READ SAVED LANGUAGE
+========================================== */
+
+function getSavedLanguage(): Language {
+  if (typeof document === "undefined") {
+    return "en";
+  }
+
+  const cookie = document.cookie
+    .split("; ")
+    .find((item) => item.startsWith("googtrans="));
+
+  return cookie?.includes("/en/ar") ? "ar" : "en";
+}
+
+function subscribeLanguage() {
+  // GTranslate does not provide a reliable cookie-change
+  // event. We read the cookie on hydration and manage
+  // subsequent selections through React state.
+  return () => {};
+}
+
+function getServerLanguage(): Language {
+  return "en";
+}
+
+/* ==========================================
+   GTRANSLATE SCRIPT READINESS
+========================================== */
+
+function subscribeScriptReady(callback: () => void) {
+  window.addEventListener(SCRIPT_EVENT, callback);
+
+  return () => {
+    window.removeEventListener(SCRIPT_EVENT, callback);
+  };
+}
+
+function getScriptReady(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const win = window as GTranslateWindow;
+
+  const script = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+
+  return (
+    script?.dataset.loaded === "true" || typeof win.doGTranslate === "function"
+  );
+}
+
+function getServerScriptReady(): boolean {
+  return false;
+}
+
+/* ==========================================
+   COMPONENT
+========================================== */
 
 export default function LanguageTranslator() {
-  const [language, setLanguage] = useState<Language>("en");
+  const savedLanguage = useSyncExternalStore(
+    subscribeLanguage,
+    getSavedLanguage,
+    getServerLanguage,
+  );
+
+  const scriptReady = useSyncExternalStore(
+    subscribeScriptReady,
+    getScriptReady,
+    getServerScriptReady,
+  );
+
+  const [manualLanguage, setManualLanguage] = useState<Language | null>(null);
+
   const [open, setOpen] = useState(false);
-  const [scriptReady, setScriptReady] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const language = manualLanguage ?? savedLanguage;
+
+  /* ==========================================
+     INITIALIZE GTRANSLATE
+  ========================================== */
 
   useEffect(() => {
     const win = window as GTranslateWindow;
@@ -46,36 +130,51 @@ export default function LanguageTranslator() {
       wrapper_selector: ".gtranslate_engine",
     };
 
-    // Detect previously selected language.
-    const cookie = document.cookie
-      .split("; ")
-      .find((item) => item.startsWith("googtrans="));
-
-    if (cookie?.includes("/en/ar")) {
-      setLanguage("ar");
-    }
+    let script = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
 
     function handleScriptReady() {
-      setScriptReady(true);
-    }
+      if (script) {
+        script.dataset.loaded = "true";
+      }
 
-    let script = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+      window.dispatchEvent(new Event(SCRIPT_EVENT));
+    }
 
     if (!script) {
       script = document.createElement("script");
+
       script.id = SCRIPT_ID;
-      script.src = "https://cdn.gtranslate.net/widgets/latest/float.js";
+      script.src = SCRIPT_URL;
       script.async = true;
+
       script.addEventListener("load", handleScriptReady);
+
       document.body.appendChild(script);
     } else {
-      setScriptReady(true);
+      script.addEventListener("load", handleScriptReady);
+
+      // Preserve readiness when the script already exists,
+      // including after client-side navigation.
+      if (
+        script.dataset.loaded === "true" ||
+        typeof win.doGTranslate === "function"
+      ) {
+        window.dispatchEvent(new Event(SCRIPT_EVENT));
+      } else {
+        // Existing script may have been loaded previously
+        // without our readiness marker.
+        // Its load event will update the status if pending.
+      }
     }
 
     return () => {
       script?.removeEventListener("load", handleScriptReady);
     };
   }, []);
+
+  /* ==========================================
+     CLOSE DROPDOWN
+  ========================================== */
 
   useEffect(() => {
     function handleOutsideClick(event: MouseEvent) {
@@ -94,24 +193,34 @@ export default function LanguageTranslator() {
     }
 
     document.addEventListener("mousedown", handleOutsideClick);
+
     document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
 
+  /* ==========================================
+     CHANGE LANGUAGE
+  ========================================== */
+
   function changeLanguage(nextLanguage: Language) {
     setOpen(false);
 
-    if (nextLanguage === language) return;
+    if (nextLanguage === language) {
+      return;
+    }
 
     const win = window as GTranslateWindow;
 
     if (typeof win.doGTranslate === "function") {
       win.doGTranslate(`en|${nextLanguage}`);
-      setLanguage(nextLanguage);
+
+      setManualLanguage(nextLanguage);
+
       return;
     }
 
@@ -120,6 +229,10 @@ export default function LanguageTranslator() {
 
   const selected =
     languages.find((item) => item.code === language) ?? languages[0];
+
+  /* ==========================================
+     RENDER
+  ========================================== */
 
   return (
     <div
@@ -136,11 +249,12 @@ export default function LanguageTranslator() {
         aria-label="Select website language"
         disabled={!scriptReady}
       >
-        <img
+        <Image
           src={selected.flag}
           alt=""
           width={26}
           height={20}
+          unoptimized
           className="language-flag"
           draggable={false}
         />
@@ -180,11 +294,12 @@ export default function LanguageTranslator() {
               }`}
               onClick={() => changeLanguage(item.code)}
             >
-              <img
+              <Image
                 src={item.flag}
                 alt=""
                 width={26}
                 height={20}
+                unoptimized
                 className="language-flag"
                 draggable={false}
               />
@@ -199,7 +314,7 @@ export default function LanguageTranslator() {
         </div>
       )}
 
-      {/* Hidden GTranslate translation engine */}
+      {/* Hidden GTranslate engine */}
       <div className="gtranslate_engine" aria-hidden="true" />
     </div>
   );

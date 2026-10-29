@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="footer">
@@ -5,16 +7,13 @@ export default function Footer() {
         <div className="footgrid">
           <div>
             <a href="#home" className="brand" aria-label="NextWave Build home">
-              <img
-                loading="lazy"
-                src="/logo-color.png"
+              <Image
+                priority
+                src="/NextWaveBuild_Horizontal_OnDark_1200px.png"
                 alt=""
-                width={44}
-                height={44}
+                width={144}
+                height={144}
               />
-              <span>
-                NextWave <span>Build</span>
-              </span>
             </a>
 
             <p>
@@ -25,9 +24,8 @@ export default function Footer() {
 
           <div>
             <h4>Explore</h4>
-            <a href="#flagships">Flagships</a>
-            <a href="#how">How it works</a>
-            <a href="#why">About</a>
+            <a href="#flagships">Programs</a>
+
             <a href="#contact">Contact</a>
           </div>
 
@@ -40,7 +38,7 @@ export default function Footer() {
 
           <div>
             <h4>Information</h4>
-            <a href="https://nextwavebuild.com/">Our website</a>
+
             <a href="https://nextwavebuild.com/documents/privacy-policy.pdf">
               Privacy policy
             </a>

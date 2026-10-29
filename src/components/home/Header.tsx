@@ -1,22 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import LanguageTranslator from "./LanguageTranslator";
+
+const SHRINK_THRESHOLD = 60;
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateHeader = () => {
+      const shouldShrink = window.scrollY > SHRINK_THRESHOLD;
+
+      setScrolled((previous) =>
+        previous === shouldShrink ? previous : shouldShrink,
+      );
+    };
+
+    // Scroll detection without blocking page scrolling.
+    window.addEventListener("scroll", updateHeader, {
+      passive: true,
+    });
+
+    // Handle refresh when the page is already scrolled.
+    const frame = window.requestAnimationFrame(updateHeader);
+
+    return () => {
+      window.removeEventListener("scroll", updateHeader);
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
-    <header className="nav">
+    <header className={`nav${scrolled ? " nav-shrink" : ""}`}>
       <div className="shell navrow">
+        {/* NEXTWAVE LOGO */}
         <a href="#home" className="brand" aria-label="NextWave Build home">
-          <img src="/logo-color.png" alt="" width={44} height={44} />
-
-          <span>
-            NextWave <span>Build</span>
-          </span>
+          <Image
+            src="/NextWaveBuild_Horizontal_OnDark_1200px.png"
+            alt="NextWave Build"
+            width={1200}
+            height={300}
+            priority
+            sizes="(max-width: 768px) 160px, 196px"
+          />
         </a>
 
+        {/* MAIN NAVIGATION */}
         <nav
           className={`navlinks${open ? " open" : ""}`}
           id="navlinks"
@@ -28,27 +60,21 @@ export default function Header() {
             }
           }}
         >
-          <a href="#flagships">Flagships</a>
-          <a href="#how">The method</a>
-          <a href="#why">Why NextWave</a>
+          <a href="#flagships">Programs</a>
           <a href="#contact">Contact</a>
         </nav>
 
         <div className="navend">
-          {/* Sign in */}
-          <a href="https://portal.nextwavebuild.com/" className="navsign">
-            Sign in
+          {/* SIGN IN / REGISTER */}
+          <a className="cta" href="https://portal.nextwavebuild.com/">
+            Sign in / Register
+            <span aria-hidden="true">↗</span>
           </a>
 
-          {/* Register */}
-          <a className="cta" href="https://portal.nextwavebuild.com/register">
-            Register your interest <span aria-hidden="true">↗</span>
-          </a>
-
-          {/* Translator AFTER Register button */}
+          {/* LANGUAGE TRANSLATOR */}
           <LanguageTranslator />
 
-          {/* Mobile menu */}
+          {/* MOBILE MENU */}
           <button
             type="button"
             className="menu"

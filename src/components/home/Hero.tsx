@@ -1,8 +1,179 @@
 "use client";
-import {useState} from "react";
-const slides=[
-{title:"E-COMMERCE",src:"/assets/commerce.svg",alt:"Illustration of an online store",lines:["E-COMMERCE","& DROPSHIPPING"]},
-{title:"FREELANCING",src:"/assets/freelance.svg",alt:"Illustration of a freelance portfolio",lines:["FREELANCING","& ONLINE WORK"]},
-{title:"TECHNOLOGY & AI",src:"/assets/technology.svg",alt:"Illustration of technology and AI learning",lines:["TECHNOLOGY","& AI"]}
+
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
+
+const SLIDE_INTERVAL = 3000;
+
+const slides = [
+  {
+    title: "E-COMMERCE",
+    src: "/assets/ECOMMERCE.webp",
+    alt: "Illustration of an online store",
+    lines: ["E-COMMERCE", "& DROPSHIPPING"],
+  },
+  {
+    title: "FREELANCING",
+    src: "/assets/FREELANCER.webp",
+    alt: "Illustration of a freelance portfolio",
+    lines: ["FREELANCING", "& ONLINE WORK"],
+  },
+  {
+    title: "TECHNOLOGY & AI",
+    src: "/assets/AI.webp",
+    alt: "Illustration of technology and AI learning",
+    lines: ["TECHNOLOGY", "& AI"],
+  },
 ];
-export default function Hero(){const [current,setCurrent]=useState(2);return (<section className="film" id="home"><div className="film-glow"></div><div className="shell film-body"><div className="hero-copy"><div className="eyebrow">The future isn't watched. It's made.</div><h1>Don't just<br /><span className="outline">learn it.</span><br /><span className="acid">Build it.</span></h1><p>Go beyond watching lessons. Learn practical skills, practise them, and bring your ideas to life through real projects—with guidance along the way.</p><div className="hero-actions"><a href="#flagships" className="cta">Explore the flagships <span>↗</span></a><a href="#how" className="under">Discover our method ↓</a></div></div><div className="film-art"><div className="back-circle"></div><div className="bigtype">N</div><div className="spotlight"><img key={current} src={slides[current].src} alt={slides[current].alt} fetchPriority="high" width="720" height="720" /></div><div className="livebadge">YOUR NEXT CHAPTER / 001</div><div className="plate"><span>FEATURED PATH</span><strong aria-live="polite">{slides[current].lines.map(line => <span className="hero-label-line" key={line}>{line}</span>)}</strong></div></div></div><div className="slidesbar"><div className="shell slidesrow">{slides.map((slide,index) => <button key={slide.title} type="button" className={`slide-tab${index === current ? " active" : ""}`} aria-pressed={index === current} onClick={() => setCurrent(index)}><i>{String(index+1).padStart(2,"0")}</i>{slide.title}</button>)}<div className="slide-arrows"><button type="button" onClick={() => setCurrent((current+2)%3)} aria-label="Previous featured flagship">←</button><button type="button" onClick={() => setCurrent((current+1)%3)} aria-label="Next featured flagship">→</button></div></div></div></section>);}
+
+const subscribeToReducedMotion = (callback: () => void) => {
+  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  media.addEventListener("change", callback);
+
+  return () => media.removeEventListener("change", callback);
+};
+
+const getReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const getServerReducedMotion = () => false;
+
+export default function Hero() {
+  const [current, setCurrent] = useState(2);
+  const [resetCount, setResetCount] = useState(0);
+
+  const reducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotion,
+    getServerReducedMotion,
+  );
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrent(((index % slides.length) + slides.length) % slides.length);
+
+    setResetCount((count) => count + 1);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, SLIDE_INTERVAL);
+
+    return () => window.clearTimeout(timer);
+  }, [current, resetCount]);
+
+  const slide = slides[current];
+
+  return (
+    <section
+      className="film hero-compact"
+      id="home"
+      aria-label="NextWave Build featured programmes"
+    >
+      <div className="film-glow" aria-hidden="true" />
+
+      <div className="shell film-body">
+        <div className="hero-copy">
+          <div className="eyebrow">Join the NextWave of earning online</div>
+
+          <h1>
+            Don&apos;t just
+            <br />
+            <span className="outline">learn it.</span>
+            <br />
+            <span className="acid hero-build-animated">Build it.</span>
+          </h1>
+
+          <p>
+            Go beyond watching lessons. Learn practical skills, practise them,
+            and bring your ideas to life through real projects—with guidance
+            along the way.
+          </p>
+        </div>
+
+        <div className="film-art">
+          <div className="back-circle" aria-hidden="true" />
+
+          <div className="bigtype" aria-hidden="true">
+            N
+          </div>
+
+          <div className="spotlight">
+            <Image
+              key={current}
+              className={`hero-slide-image${
+                reducedMotion ? " no-slide-motion" : ""
+              }`}
+              src={slide.src}
+              alt={slide.alt}
+              width={720}
+              height={720}
+              priority={current === 2}
+              sizes="(max-width: 768px) 92vw, (max-width: 1200px) 50vw, 650px"
+              style={{
+                objectFit: "contain",
+              }}
+            />
+          </div>
+
+          <div className="livebadge">YOUR NEXT CHAPTER / 00{current + 1}</div>
+
+          <div className="plate">
+            <span>FEATURED PATH</span>
+
+            <strong
+              key={current}
+              className={`hero-slide-heading${
+                reducedMotion ? " no-slide-motion" : ""
+              }`}
+              aria-live="off"
+            >
+              {slide.lines.map((line) => (
+                <span className="hero-label-line" key={line}>
+                  {line}
+                </span>
+              ))}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div className="slidesbar" aria-label="Featured programme navigation">
+        <div className="shell slidesrow">
+          {slides.map((item, index) => (
+            <button
+              key={item.title}
+              type="button"
+              className={`slide-tab${index === current ? " active" : ""}`}
+              aria-pressed={index === current}
+              onClick={() => goToSlide(index)}
+            >
+              <i>{String(index + 1).padStart(2, "0")}</i>
+
+              {item.title}
+            </button>
+          ))}
+
+          <div className="slide-arrows">
+            <button
+              type="button"
+              onClick={() => goToSlide(current - 1)}
+              aria-label="Previous featured programmes"
+            >
+              ←
+            </button>
+
+            <button
+              type="button"
+              onClick={() => goToSlide(current + 1)}
+              aria-label="Next featured programmes"
+            >
+              →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,1 +1,57 @@
-export default function Method(){return (<section className="section method" id="how"><div className="shell"><div className="heading-line reveal"><div><span className="eyebrow">The learning experience</span><h2>From lesson<br />to launch.</h2></div><p>Four simple moves. Every step brings you closer to work you can show and skills you can use.</p></div><div className="method-track"><article className="method-box reveal"><span className="num">01.</span><h3>Learn the foundations</h3><p>Short, clear lessons cover the core ideas and tools you need.</p></article><article className="method-box reveal"><span className="num">02.</span><h3>Practise the skills</h3><p>Guided exercises help you try each skill until it feels natural.</p></article><article className="method-box reveal"><span className="num">03.</span><h3>Build a project</h3><p>Bring it together in a real project you plan, create, and can share.</p></article><article className="method-box reveal"><span className="num">04.</span><h3>Get mentor feedback</h3><p>A mentor reviews your work and suggests clear next steps.</p></article></div></div></section>);}
+export default function Method() {
+  const steps = [
+    {
+      number: "01.",
+      title: "Learn the Foundations",
+      description:
+        "Short, clear lessons cover the core ideas and tools you need.",
+    },
+    {
+      number: "02.",
+      title: "Practise the Skills",
+      description:
+        "Guided exercises help you try each skill until it feels natural.",
+    },
+    {
+      number: "03.",
+      title: "Build YOUR Project",
+      description:
+        "Bring it together in a real project you plan, create, and can share.",
+    },
+    {
+      number: "04.",
+      title: "Get Mentor Feedback",
+      description: "A mentor reviews your work and suggests clear next steps.",
+    },
+  ];
+
+  return (
+    <section className="method section" id="how-it-works">
+      <div className="shell">
+        <div className="heading-line reveal">
+          <div>
+            <span className="eyebrow">The Learning Experience</span>
+
+            <h2>
+              From Lesson
+              <br />
+              To Launch.
+            </h2>
+          </div>
+        </div>
+
+        <div className="method-track">
+          {steps.map((step) => (
+            <div className="method-box reveal" key={step.number}>
+              <span className="num">{step.number}</span>
+
+              <h3>{step.title}</h3>
+
+              <p>{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

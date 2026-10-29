@@ -1,1 +1,25 @@
-export default function Ticker(){return (<div className="ticker" aria-hidden="true"><div className="track"><span>LESS THEORY. MORE DOING.</span><b>✳</b><span>IDEAS INTO PROJECTS.</span><b>✳</b><span>BUILD WHAT'S NEXT.</span><b>✳</b><span>LESS THEORY. MORE DOING.</span><b>✳</b><span>IDEAS INTO PROJECTS.</span><b>✳</b><span>BUILD WHAT'S NEXT.</span><b>✳</b></div></div>);}
+export default function Ticker() {
+  return (
+    <div className="ticker" aria-hidden="true">
+      <div className="track">
+        <span>LESS THEORY. MORE DOING.</span>
+        <b>✳</b>
+
+        <span>IDEAS INTO PROJECTS.</span>
+        <b>✳</b>
+
+        <span>BUILD WHAT&apos;S NEXT.</span>
+        <b>✳</b>
+
+        <span>LESS THEORY. MORE DOING.</span>
+        <b>✳</b>
+
+        <span>IDEAS INTO PROJECTS.</span>
+        <b>✳</b>
+
+        <span>BUILD WHAT&apos;S NEXT.</span>
+        <b>✳</b>
+      </div>
+    </div>
+  );
+}

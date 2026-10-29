@@ -2,944 +2,1290 @@
 
 :root {
   --black: #101214;
+
   --deep: #171b1e;
+
   --card: #24282b;
+
   --milk: #f4f1e9;
+
   --acid: #d9fe66;
+
   --blue: #426aea;
+
   --line: #ffffff29;
+
   --dim: #aeb5b6;
+
   --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+
   --body: "DM Sans", Arial, sans-serif;
 }
+
 * {
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
+
 body {
   margin: 0;
   background: var(--black);
   color: var(--milk);
   font: 15px/1.65 var(--body);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
+
 a {
   color: inherit;
+
   text-decoration: none;
 }
+
 button {
   cursor: pointer;
+
   font: inherit;
 }
+
 img {
   display: block;
+
   max-width: 100%;
+
+  width: 240px;
 }
+
 .shell {
   max-width: 1510px;
+
   padding: 0 5%;
+
   margin: 0 auto;
 }
+
 .eyebrow {
   font-size: 11px;
+
   font-weight: 800;
+
   letter-spacing: 0.25em;
+
   text-transform: uppercase;
 }
+
 .eyebrow::before {
   content: "●";
+
   font-size: 8px;
+
   color: var(--acid);
+
   margin-right: 12px;
 }
+
 .nav {
   position: sticky;
+
   top: 0;
+
   z-index: 30;
+
   background: #121518ed;
+
   backdrop-filter: blur(20px);
+
   border-bottom: 1px solid #ffffff1c;
 }
+
 .navrow {
   height: 81px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 30px;
 }
+
 .brand {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
+
   font: 800 22px var(--body);
+
   letter-spacing: -0.065em;
 }
+
 .brand img {
-  width: 44px;
+  width: 196px !important;
+
   height: 44px;
 }
+
 .brand span span {
   font-weight: 400;
+
   color: var(--acid);
 }
+
 .navlinks {
   display: flex;
+
   gap: 32px;
+
   font-size: 12px;
+
   font-weight: 800;
+
   text-transform: uppercase;
+
   letter-spacing: 0.09em;
 }
+
 .navlinks a:hover {
   color: var(--acid);
 }
+
 .cta {
   display: inline-flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 18px;
+
   background: var(--acid);
+
   color: #11190e;
+
   border: 1px solid var(--acid);
+
   padding: 14px 20px;
+
   font-size: 12px;
+
   font-weight: 900;
+
   letter-spacing: 0.02em;
+
   transition: 0.25s;
 }
+
 .cta:hover {
   transform: translateY(-3px);
+
   background: #edffae;
 }
+
 .cta.invert {
   background: transparent;
+
   color: var(--milk);
+
   border-color: #88908d;
 }
+
 .navsign {
   font-size: 12px;
+
   font-weight: 750;
 }
+
 .navend {
   display: flex;
+
   align-items: center;
+
   gap: 25px;
 }
+
 .menu {
   display: none;
+
   color: #fff;
+
   border: 0;
+
   background: transparent;
+
   font-size: 28px;
 }
+
 .film {
   min-height: 760px;
+
   position: relative;
+
   overflow: hidden;
+
   background: radial-gradient(
     ellipse at 70% 39%,
+
     #2b3440 0,
+
     #111517 47%,
+
     #0d1012 88%
   );
 }
+
 .film:before {
   content: "";
+
   position: absolute;
+
   inset: 0;
+
   pointer-events: none;
+
   opacity: 0.12;
+
   background: repeating-linear-gradient(
     0deg,
     #eee2 0,
+
     #eee2 1px,
+
     transparent 1px,
+
     transparent 3px
   );
 }
+
 .film:after {
   content: "";
+
   position: absolute;
+
   inset: 0;
+
   pointer-events: none;
+
   background: linear-gradient(90deg, #101214 0%, #101214ee 28%, #10121400 72%);
 }
+
 .film-glow {
   position: absolute;
+
   right: -12%;
+
   top: -16%;
+
   width: 730px;
+
   height: 730px;
+
   border: 1px solid #f7f8f63b;
+
   border-radius: 50%;
+
   box-shadow:
     0 0 0 88px #f8ffed07,
     0 0 0 190px #f8ffed05;
 }
+
 .film-glow:before {
   content: "";
+
   position: absolute;
+
   inset: 70px;
+
   border: 1px solid #d9fe6663;
+
   border-radius: 50%;
 }
+
 .film-body {
   display: grid;
+
   grid-template-columns: 1.07fr 0.93fr;
+
   gap: 30px;
+
   position: relative;
+
   z-index: 1;
+
   align-items: center;
-  min-height: 730px;
+
+  min-height: 680px;
 }
+
 .hero-copy {
-  padding: 88px 0 120px;
+  padding: 0px 0 120px !important;
 }
+
 .hero-copy h1 {
-  font: 900 clamp(88px, 10vw, 165px)/0.84 var(--display);
+  font: 900 clamp(88px, 10vw, 115px)/0.84 var(--display);
+
   letter-spacing: -0.017em;
-  margin: 35px 0 30px;
+
+  margin: 10px 0 30px;
+
   text-transform: uppercase;
 }
+
 .hero-copy h1 .outline {
   color: transparent;
+
   -webkit-text-stroke: 1px #e5e8de;
 }
+
 .hero-copy h1 .acid {
   color: var(--acid);
 }
+
 .hero-copy p {
-  max-width: 420px;
+  max-width: 530px;
+
   font-size: 15px;
+
   line-height: 1.9;
+
   color: #bbc6c4;
+
   margin: 0 0 29px;
 }
+
 .hero-actions {
   display: flex;
+
   align-items: center;
+
   gap: 18px;
+
   flex-wrap: wrap;
 }
+
 .under {
   font-size: 12px;
+
   font-weight: 800;
+
   letter-spacing: 0.08em;
+
   border-bottom: 1px solid #8a9592;
+
   padding-bottom: 5px;
 }
+
 .film-art {
   height: 610px;
+
   position: relative;
-  margin-top: 33px;
+
+  margin-top: 0px;
 }
+
 .film-art .back-circle {
   position: absolute;
+
   width: 520px;
+
   height: 520px;
+
   right: 0;
+
   top: 0;
+
   border-radius: 50%;
+
   background: radial-gradient(
     circle at 46% 48%,
+
     #5261b6,
     #172a44 55%,
+
     transparent 73%
   );
+
   filter: blur(1px);
 }
+
 .film-art .bigtype {
   position: absolute;
+
   bottom: 1%;
+
   right: 3%;
+
   font: 900 320px/0.8 var(--display);
+
   color: #ffffff0a;
+
   letter-spacing: -0.1em;
 }
+
 .spotlight {
   position: absolute;
+
   top: 10%;
+
   right: 4%;
+
   width: 82%;
-  height: 78%;
+
+  height: 47%;
+
   border-radius: 15px;
+
   overflow: hidden;
+
   transform: rotate(5deg);
+
   border: 10px solid #f3efe6;
+
   box-shadow:
     30px 30px 0 #d9fe66,
     0 30px 75px #000b;
+
   transition: transform 0.35s;
 }
+
 .spotlight img {
   height: 100%;
+
   width: 100%;
+
   object-fit: cover;
+
   transition:
     opacity 0.23s,
     transform 0.5s;
 }
+
 .spotlight:hover {
   transform: rotate(2deg) scale(1.02);
 }
+
 .plate {
   position: absolute;
+
   left: -4%;
-  bottom: 12%;
+
+  bottom: 25%;
+
   background: #171b1e;
+
   border: 1px solid #626968;
+
   box-shadow: 0 25px 35px #0008;
+
   padding: 26px 30px;
+
   width: 232px;
+
   transform: rotate(-7deg);
 }
+
 .plate span {
   display: block;
+
   color: var(--acid);
+
   font: 800 12px var(--body);
+
   letter-spacing: 0.14em;
 }
+
 .plate strong {
   font: 800 32px/1.06 var(--display);
+
   text-transform: uppercase;
+
   display: block;
+
   margin-top: 12px;
 }
+
 .livebadge {
   position: absolute;
+
   top: 3%;
+
   left: 7%;
+
   background: var(--acid);
+
   color: var(--black);
+
   font: 800 11px var(--body);
+
   letter-spacing: 0.17em;
+
   padding: 12px 16px;
+
   transform: rotate(-8deg);
 }
+
 .slidesbar {
   position: absolute;
+
   z-index: 5;
+
   bottom: 0;
+
   left: 0;
+
   right: 0;
+
   background: #101214db;
+
   border-top: 1px solid #ffffff35;
 }
+
 .slidesrow {
   display: grid;
+
   grid-template-columns: 1fr 1fr 1fr auto;
+
   gap: 0;
 }
+
 .slide-tab {
   color: #929c9a;
+
   padding: 19px 20px;
+
   background: none;
+
   border: 0;
+
   border-left: 1px solid #ffffff28;
+
   text-align: left;
+
   font-size: 12px;
+
   letter-spacing: 0.08em;
+
   font-weight: 800;
+
   position: relative;
+
   transition: background 0.25s;
+
   color: #afb9b6;
 }
+
 .slide-tab i {
   font-size: 11px;
+
   font-style: normal;
+
   margin-right: 15px;
+
   color: var(--acid);
 }
+
 .slide-tab.active {
   color: #fff;
+
   background: #ffffff13;
 }
+
 .slide-tab.active:before {
   content: "";
+
   position: absolute;
+
   top: 0;
+
   left: 0;
+
   right: 0;
+
   height: 3px;
+
   background: var(--acid);
 }
+
 .slide-arrows {
   display: flex;
+
   border-right: 1px solid #ffffff28;
 }
+
 .slide-arrows button {
   width: 61px;
+
   background: none;
+
   border: 0;
+
   border-left: 1px solid #ffffff28;
+
   color: #fff;
+
   font-size: 23px;
 }
+
 .slide-arrows button:hover {
   background: var(--acid);
+
   color: #111;
 }
+
 .ticker {
   background: var(--acid);
+
   color: #172015;
+
   padding: 19px 0;
+
   overflow: hidden;
 }
+
 .ticker .track {
   display: flex;
+
   gap: 45px;
+
   width: max-content;
+
   animation: run 27s linear infinite;
+
   font: 800 22px var(--display);
+
   letter-spacing: 0.1em;
+
   text-transform: uppercase;
 }
+
 .ticker .track b {
   font-size: 23px;
 }
+
 @keyframes run {
   to {
     transform: translateX(-50%);
   }
 }
+
 section {
   scroll-margin-top: 85px;
 }
+
 .section {
   padding: 115px 0;
 }
+
 .heading-line {
   display: flex;
+
   align-items: end;
+
   justify-content: space-between;
+
   gap: 30px;
+
   margin-bottom: 55px;
 }
+
 .heading-line h2 {
   font: 900 clamp(65px, 7vw, 112px)/0.91 var(--display);
+
   text-transform: uppercase;
+
   letter-spacing: 0.005em;
+
   margin: 20px 0 0;
 }
+
 .heading-line p {
   color: var(--dim);
+
   max-width: 280px;
+
   font-size: 14px;
 }
-.program-list {
-  border-top: 1px solid var(--line);
-}
-.program {
-  display: grid;
-  grid-template-columns: 110px 1fr 30% 45px;
-  align-items: center;
-  gap: 24px;
-  border-bottom: 1px solid var(--line);
-  padding: 29px 0;
-  transition: background 0.2s;
-}
-.program:hover {
-  background: #ffffff0a;
-}
-.pr-num {
-  color: var(--acid);
-  font: 800 45px var(--display);
-}
-.pr-content h3 {
-  font: 800 clamp(34px, 4vw, 60px)/1 var(--display);
-  text-transform: uppercase;
-  margin: 0 0 10px;
-}
-.pr-content p {
-  font-size: 13px;
-  color: #adb8b7;
-  margin: 0;
-}
-.pr-image {
-  height: 158px;
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-.pr-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s;
-}
-.program:hover img {
-  transform: scale(1.07);
-}
-.program .go {
-  height: 51px;
-  width: 51px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #929e96;
-  border-radius: 50%;
-  font-size: 24px;
-  transition: background 0.25s;
-}
-.program:hover .go {
-  background: var(--acid);
-  color: #111;
-}
-.method {
-  background: var(--milk);
-  color: #181c1c;
-  position: relative;
-  overflow: hidden;
-}
-.method .eyebrow:before {
-  color: #496b54;
-}
-.method h2 {
-  color: #161b1b;
-}
-.method .heading-line p {
-  color: #5f6b66;
-}
-.method-track {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 13px;
-}
-.method-box {
-  background: #e8e7df;
-  min-height: 294px;
-  padding: 28px 23px;
-  display: flex;
-  flex-direction: column;
-  transition: background 0.25s;
-}
-.method-box:hover {
-  background: #d9fe66;
-}
-.method-box .num {
-  font: 800 73px/0.9 var(--display);
-  letter-spacing: -0.02em;
-  color: #a6aea1;
-}
-.method-box h3 {
-  font: 800 31px/0.99 var(--display);
-  text-transform: uppercase;
-  margin: auto 0 13px;
-}
-.method-box p {
-  font-size: 13px;
-  color: #56615e;
-  line-height: 1.7;
-  margin: 0;
-}
+
 .manifesto {
   min-height: 680px;
+
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 0;
 }
+
 .manifesto-art {
   background: #19292e;
+
   position: relative;
+
   overflow: hidden;
+
   display: grid;
+
   place-items: center;
+
   min-height: 500px;
 }
-.manifesto-art:before {
+.manifesto-art::before {
   content: "";
-  height: 510px;
+  position: absolute;
+
   width: 510px;
+  height: 510px;
+
+  top: 50%;
+  left: 50%;
+
   border: 105px solid #2b5760;
   border-radius: 50%;
-  position: absolute;
-  transform: rotate(-20deg) translate(-35px, 35px);
+
+  transform: translate(-50%, -50%);
+
   box-shadow:
     0 0 0 1px #d9fe6660,
     0 0 0 130px #d9fe6611;
+
+  pointer-events: none;
 }
-.manifesto-art:after {
-  content: "N";
-  font: 900 520px/0.9 var(--display);
-  color: var(--acid);
-  position: relative;
-  z-index: 1;
-  transform: rotate(-10deg);
-}
+
 .manifesto-art .corner {
   position: absolute;
+
   left: 8%;
+
   top: 9%;
+
   z-index: 2;
+
   font: 800 12px var(--body);
+
   letter-spacing: 0.2em;
 }
+
 .manifesto-copy {
   padding: 90px max(8%, 40px);
+
   display: flex;
+
   flex-direction: column;
+
   justify-content: center;
 }
+
 .manifesto-copy h2 {
   font: 900 clamp(60px, 6vw, 95px)/0.94 var(--display);
+
   text-transform: uppercase;
+
   margin: 28px 0;
 }
+
 .manifesto-copy > p {
   color: #b6c2c1;
+
   font-size: 15px;
+
   line-height: 1.9;
 }
+
 .manifesto-points {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 25px;
+
   margin-top: 20px;
 }
+
 .manifesto-points b {
   display: block;
+
   font-size: 13px;
+
   margin-bottom: 6px;
 }
+
 .manifesto-points small {
   color: #8f9d9e;
+
   line-height: 1.65;
+
   display: block;
 }
+
 .call {
   background: var(--blue);
+
   padding: 90px 0;
 }
+
 .call-grid {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 30px;
 }
+
 .call h2 {
   font: 900 clamp(69px, 7vw, 115px)/0.9 var(--display);
+
   text-transform: uppercase;
+
   max-width: 820px;
+
   margin: 17px 0;
 }
+
 .call p {
   font-size: 14px;
+
   color: #e0e5ff;
 }
+
 .call .cta {
   white-space: nowrap;
 }
+
 .footer {
   background: #0b0e10;
+
   padding: 70px 0 25px;
 }
+
 .footgrid {
   display: grid;
+
   grid-template-columns: 1.4fr 0.7fr 0.8fr 0.8fr;
+
   gap: 30px;
 }
+
 .footer p {
   color: #98a4a4;
+
   font-size: 13px;
+
   max-width: 290px;
 }
+
 .footer h4 {
   font-size: 11px;
+
   letter-spacing: 0.2em;
+
   color: var(--acid);
+
   text-transform: uppercase;
+
   margin: 10px 0 21px;
 }
+
 .footer a:not(.brand) {
   display: block;
+
   font-size: 13px;
+
   color: #d0d8d6;
+
   margin: 11px 0;
 }
+
 .footer a:hover {
   text-decoration: underline;
 }
+
 .end {
   border-top: 1px solid #ffffff26;
+
   padding-top: 20px;
+
   margin-top: 55px;
+
   display: flex;
+
   justify-content: space-between;
+
   gap: 12px;
+
   color: #85918f;
+
   font-size: 11px;
+
   flex-wrap: wrap;
 }
+
 .reveal {
   opacity: 1;
+
   transform: none;
 }
+
 .reveal.visible {
   opacity: 1;
+
   transform: none;
 }
+
 @media (max-width: 1080px) {
   .shell {
     padding: 0 4%;
   }
+
   .navlinks {
     gap: 18px;
   }
+
   .hero-copy h1 {
-    font-size: clamp(80px, 10vw, 119px);
+    font-size: clamp(65px, 8vw, 65px);
   }
+
   .plate {
     left: -9%;
   }
+
   .film-art {
     height: 510px;
   }
+
   .spotlight {
     height: 78%;
   }
+
   .film-body {
     min-height: 680px;
   }
+
   .pr-image {
     height: 130px;
   }
 }
+
 @media (max-width: 760px) {
   .navrow {
     height: 69px;
   }
+
   .navlinks {
     display: none;
+
     position: absolute;
+
     top: 100%;
+
     left: 0;
+
     right: 0;
+
     background: #151b1e;
+
     padding: 20px 6%;
+
     flex-direction: column;
+
     align-items: flex-start;
   }
+
   .navlinks.open {
     display: flex;
   }
+
   .navsign {
     display: none;
   }
+
   .navend > .cta {
     display: none;
   }
+
   .menu {
     display: block;
   }
+
   .film-body {
     grid-template-columns: 1fr;
+
     padding-bottom: 80px;
   }
+
   .hero-copy {
     padding: 55px 0 0;
   }
+
   .hero-copy h1 {
     font-size: clamp(81px, 17vw, 120px);
   }
+
   .film-art {
     height: 420px;
+
     margin: 0;
   }
+
   .spotlight {
     width: 65%;
+
     height: 77%;
+
     right: 15%;
   }
+
   .plate {
     left: 5%;
+
     bottom: 9%;
   }
+
   .livebadge {
     left: 12%;
   }
+
   .slidesrow {
     grid-template-columns: repeat(3, 1fr);
   }
+
   .slide-tab {
     font-size: 10px;
+
     padding: 15px 8px;
+
     line-height: 1.2;
   }
+
   .slide-tab i {
     display: block;
+
     margin-bottom: 4px;
   }
+
   .slide-arrows {
     display: none;
   }
+
   .section {
     padding: 75px 0;
   }
+
   .heading-line {
     display: block;
   }
+
   .heading-line h2 {
     font-size: 75px;
   }
+
   .program {
     grid-template-columns: 50px 1fr 45px;
+
     gap: 10px;
   }
+
   .pr-num {
     font-size: 33px;
   }
+
   .pr-image {
     display: none;
   }
+
   .pr-content h3 {
     font-size: 40px;
   }
+
   .pr-content p {
     font-size: 12px;
   }
-  .method-track {
-    grid-template-columns: 1fr 1fr;
-  }
+
   .manifesto {
     grid-template-columns: 1fr;
   }
+
   .manifesto-art {
     min-height: 380px;
   }
-  .manifesto-art:after {
-    font-size: 350px;
-  }
+
   .manifesto-copy {
     padding: 60px 6%;
   }
+
   .call-grid {
     display: block;
   }
+
   .footgrid {
     grid-template-columns: 1fr 1fr;
   }
+
   .footgrid > div:first-child {
     grid-column: 1/-1;
   }
 }
+
 @media (max-width: 460px) {
   .brand {
     font-size: 18px;
   }
+
   .brand img {
     width: 36px;
+
     height: 36px;
   }
+
   .hero-copy h1 {
     font-size: 74px;
   }
+
   .hero-copy p {
     font-size: 14px;
   }
+
   .film-art {
     height: 350px;
   }
+
   .spotlight {
     width: 67%;
+
     height: 72%;
+
     right: 13%;
+
     border-width: 6px;
+
     box-shadow: 13px 14px 0 var(--acid);
   }
+
   .plate {
     padding: 15px;
+
     width: 158px;
   }
+
   .plate strong {
     font-size: 24px;
   }
-  .method-track {
-    grid-template-columns: 1fr;
-  }
-  .method-box {
-    min-height: 230px;
-  }
+
   .manifesto-points {
     grid-template-columns: 1fr;
   }
+
   .footgrid {
     grid-template-columns: 1fr;
   }
+
   .footgrid > div:first-child {
     grid-column: auto;
   }
 }
+
 @media (max-width: 760px) {
   .program {
     grid-template-columns: 43px minmax(0, 1fr) 45px;
   }
+
   .pr-content {
     min-width: 0;
   }
+
   .manifesto {
     grid-template-columns: minmax(0, 1fr);
   }
+
   .manifesto-art,
   .manifesto-copy {
     min-width: 0;
+
     width: 100%;
   }
 }
+
 @media (max-width: 460px) {
   .pr-content h3 {
     font-size: 34px;
+
     overflow-wrap: anywhere;
   }
+
   .manifesto-copy h2 {
     font-size: 56px;
+
     overflow-wrap: anywhere;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *:before,
   *:after {
     animation: none !important;
+
     transition: none !important;
+
     scroll-behavior: auto !important;
   }
+
   .reveal {
     opacity: 1;
+
     transform: none;
   }
 }
 
 :focus-visible {
   outline: 3px solid var(--acid);
+
   outline-offset: 5px;
 }
+
 .skip-link {
   position: fixed;
+
   top: -100px;
+
   left: 16px;
+
   z-index: 100;
+
   background: var(--acid);
+
   color: #111;
+
   padding: 12px;
 }
+
 .skip-link:focus {
   top: 12px;
 }
+
 .hero-label-line {
   display: block;
 }
+
 .film-art {
   min-width: 0;
 }
+
 .spotlight img {
   animation: appear 0.3s ease;
 }
+
 @keyframes appear {
   from {
     opacity: 0.2;
   }
+
   to {
     opacity: 1;
   }
@@ -947,55 +1293,81 @@ section {
 
 .brand img {
   width: 40px;
+
   height: 40px;
+
   flex: 0 0 40px;
+
   object-fit: contain;
+
   border-radius: 9px;
 }
 
 @media (max-width: 460px) {
   .brand img {
     width: 34px;
+
     height: 34px;
+
     flex-basis: 34px;
+
     border-radius: 7px;
   }
 }
 
 /* ============================================
+
    NEXTWAVE CUSTOM LANGUAGE TRANSLATOR
+
    DARK THEME
-============================================ */
+
+\============================================ */
 
 /* Translator wrapper */
+
 .language-translator {
   position: relative;
+
   display: inline-flex;
+
   align-items: center;
+
   flex-shrink: 0;
+
   z-index: 1000;
+
   font-family: inherit;
 }
 
 /* Main language button */
+
 .language-trigger {
   display: inline-flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 10px;
 
   width: 160px;
+
   min-height: 44px;
+
   padding: 9px 13px;
 
   background: #101214;
+
   color: #ffffff;
 
   border: 1px solid #343a40;
+
   border-radius: 10px;
 
   font-family: inherit;
+
   font-size: 13px;
+
   font-weight: 600;
 
   cursor: pointer;
@@ -1007,49 +1379,69 @@ section {
 }
 
 /* Hover and active state */
+
 .language-trigger:hover,
 .language-trigger.active {
   border-color: #d9fe66;
+
   background: #222629;
 }
 
 .language-trigger:focus-visible {
   outline: 2px solid #d9fe66;
+
   outline-offset: 3px;
 }
 
 .language-trigger:disabled {
   opacity: 0.75;
+
   cursor: wait;
 }
 
 /* ============================================
+
    COUNTRY FLAGS
-============================================ */
+
+\============================================ */
 
 .language-flag {
   display: block;
+
   width: 26px;
+
   height: 20px;
+
   min-width: 26px;
+
   object-fit: cover;
+
   border-radius: 3px;
+
   flex-shrink: 0;
+
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 /* Language label */
+
 .language-name {
   flex: 1;
+
   color: #ffffff;
+
   text-align: left;
+
   white-space: nowrap;
 }
 
 /* Dropdown arrow */
+
 .language-chevron {
   flex-shrink: 0;
+
   color: #ffffff;
+
   transition: transform 0.2s ease;
 }
 
@@ -1058,60 +1450,84 @@ section {
 }
 
 /* ============================================
+
    DROPDOWN PANEL — OPENS DOWNWARD
-============================================ */
+
+\============================================ */
 
 .language-menu {
   position: absolute;
+
   top: calc(100% + 6px);
+
   bottom: auto;
+
   right: 0;
+
   left: auto;
 
   display: flex;
+
   flex-direction: column;
 
   width: 160px;
+
   height: auto;
+
   max-height: none;
 
   padding: 5px;
 
   background: #101214;
+
   border: 1px solid #343a40;
+
   border-radius: 10px;
 
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 
   overflow: visible;
+
   z-index: 9999;
 }
 
 /* ============================================
+
    LANGUAGE OPTIONS
-============================================ */
+
+\============================================ */
 
 .language-option {
   display: flex;
+
   align-items: center;
+
   gap: 10px;
 
   width: 100%;
+
   min-height: 43px;
+
   padding: 9px 10px;
 
   background: transparent;
+
   color: #ffffff;
 
   border: none;
+
   border-radius: 7px;
 
   font-family: inherit;
+
   font-size: 13px;
+
   font-weight: 500;
 
   text-align: left;
+
   cursor: pointer;
+
   white-space: nowrap;
 
   transition:
@@ -1120,15 +1536,20 @@ section {
 }
 
 /* Hover effect */
+
 .language-option:hover {
   background: #222629;
+
   color: #ffffff;
 }
 
 /* Currently selected language */
+
 .language-option.selected {
   background: rgba(0, 201, 183, 0.13);
+
   color: #d9fe66;
+
   font-weight: 600;
 }
 
@@ -1137,33 +1558,47 @@ section {
 }
 
 /* Keyboard accessibility */
+
 .language-option:focus-visible {
   outline: 2px solid #d9fe66;
+
   outline-offset: -2px;
 }
 
 /* Active checkmark */
+
 .language-check {
   margin-left: auto;
+
   color: #d9fe66;
+
   font-size: 15px;
+
   font-weight: 700;
 }
 
 /* ============================================
+
    HIDDEN GTRANSLATE ENGINE
-============================================ */
+
+\============================================ */
 
 .gtranslate_engine {
   position: absolute;
+
   width: 0;
+
   height: 0;
+
   overflow: hidden;
+
   visibility: hidden;
+
   pointer-events: none;
 }
 
 /* Allow dropdown to extend below the header */
+
 .nav,
 .navrow,
 .navend {
@@ -1171,36 +1606,1708 @@ section {
 }
 
 /* ============================================
+
    RESPONSIVE DESIGN
-============================================ */
+
+\============================================ */
 
 @media (max-width: 768px) {
   .language-trigger {
     width: 122px;
+
     min-height: 38px;
+
     gap: 6px;
+
     padding: 7px 9px;
+
     font-size: 12px;
   }
 
   .language-flag {
     width: 22px;
+
     height: 17px;
+
     min-width: 22px;
   }
 
   .language-menu {
     width: 145px;
+
     right: 0;
   }
 
   .language-option {
     font-size: 12px;
+
     min-height: 40px;
   }
 
   .language-chevron {
     width: 14px;
+
     height: 14px;
+  }
+}
+
+/* NEXTWAVE — replace the previous Hero-compact.css rules with this block.
+
+   Paste at the END of src/app/globals.css. */
+
+/* Set this to the actual header height if your nav changes. */
+
+:root {
+  --nw-nav-height: 108px;
+
+  --nw-tabs-height: 60px;
+}
+
+.film.hero-compact {
+  box-sizing: border-box;
+
+  display: flex;
+
+  flex-direction: column;
+
+  height: calc(100svh - var(--nw-nav-height));
+
+  min-height: 540px; /* readable fallback on very short windows */
+
+  overflow: hidden;
+}
+
+.hero-compact .film-body {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+
+  align-items: center !important;
+
+  gap: clamp(20px, 3vw, 62px);
+
+  flex: 1 1 auto;
+
+  width: 100%;
+
+  min-height: 0 !important;
+
+  height: auto !important;
+
+  padding-top: clamp(12px, 2vh, 24px) !important;
+
+  padding-bottom: clamp(12px, 2vh, 24px) !important;
+}
+
+.hero-compact .hero-copy {
+  min-width: 0;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.hero-compact .hero-copy h1 {
+  font-size: clamp(2.7rem, min(5vw, 9.3vh), 6rem) !important;
+
+  line-height: 0.99 !important;
+
+  margin: clamp(8px, 1.6vh, 16px) 0 clamp(10px, 2vh, 22px) !important;
+}
+
+.hero-compact .hero-copy p {
+  font-size: clamp(0.87rem, 1.03vw, 1.15rem) !important;
+
+  line-height: 1.5;
+
+  max-width: 610px;
+
+  margin-bottom: 0 !important;
+}
+
+/* Fill the ENTIRE right-hand hero column rather than limiting image to 360px. */
+
+.hero-compact .film-art {
+  box-sizing: border-box;
+
+  position: relative;
+
+  width: 100%;
+
+  height: 100% !important;
+
+  min-height: 0 !important;
+
+  max-height: none !important;
+
+  align-self: stretch;
+}
+
+.hero-compact .spotlight {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100% !important;
+
+  height: 100% !important;
+
+  max-width: none !important;
+
+  max-height: none !important;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+/* Larger hero illustrations inside the existing frame */
+
+.hero-compact .spotlight img {
+  display: block !important;
+
+  width: min(100%, 650px) !important;
+
+  height: 100% !important;
+
+  max-width: 650px !important;
+
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+
+  object-position: center !important;
+}
+
+.hero-compact .film-art .livebadge,
+.hero-compact .film-art .plate {
+  z-index: 3;
+}
+
+/* Tabs occupy their own bottom row; not squeezed off-screen by hero content. */
+
+.hero-compact .slidesbar {
+  position: relative;
+
+  z-index: 5;
+
+  flex: 0 0 auto;
+
+  min-height: var(--nw-tabs-height);
+}
+
+.hero-compact .slidesrow {
+  min-height: var(--nw-tabs-height);
+}
+
+/* Preserve the animated lime/white/cyan Build it. treatment. */
+
+.hero-compact .hero-build-animated {
+  display: inline-block;
+
+  transform-origin: left center;
+
+  background: linear-gradient(
+    105deg,
+    #d9fe66 0%,
+
+    #fff7c8 24%,
+
+    #87e9d5 46%,
+
+    #d9fe66 68%,
+
+    #fff 84%,
+
+    #d9fe66 100%
+  );
+
+  background-size: 240% 100%;
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  color: #d9fe66;
+
+  animation:
+    nw-build-pulse 3.4s ease-in-out infinite,
+    nw-build-colors 5s linear infinite;
+}
+
+@keyframes nw-build-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes nw-build-colors {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Short desktops and laptops: shrink text first so artwork can stay large. */
+
+@media (min-width: 769px) and (max-height: 720px) {
+  .hero-compact .hero-copy h1 {
+    font-size: clamp(2.5rem, 8vh, 4.5rem) !important;
+  }
+
+  .hero-compact .hero-copy p {
+    font-size: 0.88rem !important;
+  }
+
+  .hero-compact .film-body {
+    padding-top: 8px !important;
+
+    padding-bottom: 8px !important;
+  }
+}
+
+/* Tablets and phones: stack sections and keep tabs readable. */
+
+@media (max-width: 768px) {
+  :root {
+    --nw-nav-height: 76px;
+
+    --nw-tabs-height: 58px;
+  }
+
+  .film.hero-compact {
+    min-height: 600px;
+  }
+
+  .hero-compact .film-body {
+    grid-template-columns: minmax(0, 1fr);
+
+    grid-template-rows: auto minmax(0, 1fr);
+
+    gap: 4px;
+
+    padding-top: 12px !important;
+
+    padding-bottom: 8px !important;
+  }
+
+  .hero-compact .hero-copy h1 {
+    font-size: clamp(2.35rem, min(10vw, 7vh), 4.4rem) !important;
+
+    margin: 6px 0 8px !important;
+  }
+
+  .hero-compact .hero-copy p {
+    font-size: clamp(0.78rem, 2.6vw, 0.95rem) !important;
+
+    line-height: 1.35;
+  }
+
+  .hero-compact .film-art {
+    min-height: 160px !important;
+  }
+
+  .hero-compact .spotlight img {
+    width: 85% !important;
+
+    max-width: 300px !important;
+
+    max-height: 30vh !important;
+  }
+
+  .hero-compact .slidesrow {
+    display: flex;
+
+    flex-wrap: nowrap;
+  }
+
+  .hero-compact .slide-tab {
+    min-width: 0;
+
+    flex: 1 1 0;
+
+    font-size: clamp(0.59rem, 2vw, 0.85rem);
+  }
+
+  .hero-compact .slide-arrows {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-compact .spotlight img {
+    width: 85% !important;
+
+    max-width: 300px !important;
+
+    max-height: 30vh !important;
+  }
+}
+
+/* Very narrow devices: prioritize all three tabs; shorten labels visually only. */
+
+@media (max-width: 390px) {
+  .hero-compact .slide-tab {
+    padding-inline: 4px;
+
+    letter-spacing: 0;
+  }
+
+  .hero-compact .slide-tab i {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-compact .hero-build-animated {
+    animation: none;
+  }
+}
+
+/* ======================================
+
+   FIX HERO HEIGHT AND IMAGE OVERFLOW
+
+\====================================== */
+
+/* Hero fills the screen below the header */
+
+.hero-compact {
+  height: calc(100svh - 112px) !important;
+
+  min-height: 0 !important;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+}
+
+/* Main content occupies available space */
+
+.hero-compact .film-body {
+  flex: 1 1 auto !important;
+
+  min-height: 0 !important;
+
+  height: auto !important;
+
+  padding-top: 16px !important;
+
+  padding-bottom: 16px !important;
+
+  align-items: center !important;
+}
+
+.hero-compact .film-art {
+  height: min(65vh, 580px) !important;
+
+  max-height: 100% !important;
+
+  min-height: 0 !important;
+}
+
+/* Prevent illustration from becoming oversized */
+
+.hero-compact .spotlight img {
+  width: min(100%, 460px) !important;
+
+  height: auto !important;
+
+  max-width: 460px !important;
+
+  max-height: 50vh !important;
+
+  object-fit: contain !important;
+}
+
+/* Keep tabs at the bottom and visible */
+
+.hero-compact .slidesbar {
+  flex: 0 0 auto !important;
+
+  position: relative !important;
+
+  margin-top: auto !important;
+
+  z-index: 10 !important;
+}
+
+@media (max-width: 768px) {
+  .hero-compact .film-art {
+    height: min(36vh, 330px) !important;
+
+    max-height: 100% !important;
+  }
+
+  .hero-compact .spotlight img {
+    width: min(92vw, 400px) !important;
+
+    height: 100% !important;
+
+    max-width: 400px !important;
+
+    max-height: 100% !important;
+
+    object-fit: contain !important;
+  }
+}
+
+/* ==========================================
+
+   NEXTWAVE — ENLARGE IMAGE INSIDE HERO FRAME
+
+\========================================== */
+
+@media (min-width: 769px) {
+  .hero-compact .spotlight {
+    overflow: hidden !important;
+  }
+
+  .hero-compact .spotlight img.hero-slide-image {
+    width: 80% !important;
+
+    height: 80% !important;
+
+    max-width: none !important;
+
+    max-height: none !important;
+
+    object-fit: contain !important;
+
+    object-position: center !important;
+
+    transform: scale(1.4);
+
+    transform-origin: center center;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — PROGRAMME IMAGE -> PRICE REVEAL
+   Single source of truth for Flagships styling.
+========================================== */
+
+.program-list {
+  display: block;
+  border-top: 1px solid var(--line);
+}
+
+.program-list .program {
+  position: relative;
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr) minmax(270px, 360px) 54px;
+  gap: clamp(14px, 2vw, 28px);
+  align-items: center;
+  min-height: 265px;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  background: transparent;
+  transition: background-color 250ms ease;
+}
+
+.program-list .program:hover,
+.program-list .program:focus-visible {
+  background-color: rgba(255, 255, 255, 0.035);
+}
+
+.program-list .pr-num {
+  color: var(--acid);
+  font: 800 clamp(32px, 3vw, 44px)/1 var(--display);
+}
+
+.program-list .pr-content {
+  min-width: 0;
+}
+
+.program-list .pr-content h3 {
+  margin: 0 0 12px;
+  font: 800 clamp(34px, 3.4vw, 58px)/0.98 var(--display);
+  text-transform: uppercase;
+  overflow-wrap: normal;
+}
+
+.program-list .pr-content p {
+  margin: 0;
+  max-width: 550px;
+  color: #adb8b7;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Fixed visual slot: the price takes the exact place of the image. */
+.program-list .pr-visual {
+  position: relative;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  height: 206px;
+  margin: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.program-list .pr-visual .pr-image {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 400ms ease;
+}
+
+.program-list .pr-visual .pr-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+  transition: none;
+}
+
+/* A premium lime retail tag, initially outside the right edge. */
+.program-list .pr-price-tag {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: min(210px, calc(100% - 16px));
+  min-height: 156px;
+  margin: 0;
+  padding: 24px 18px 22px 32px;
+  border: 0;
+  border-radius: 5px 17px 17px 5px;
+  background: var(--acid);
+  color: #0a1b33;
+  box-shadow: 0 16px 32px #0005;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(115%, -50%) rotate(4deg);
+  transition:
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 400ms ease,
+    visibility 400ms ease;
+}
+
+.program-list .pr-price-tag::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: #101214;
+  box-shadow: inset 0 0 0 2px #0a1b3344;
+}
+
+.program-list .pr-price-tag::after {
+  content: none;
+}
+
+.program-list .pr-price-label {
+  margin: 0 0 7px;
+  color: #0a1b33;
+  font: 800 10px/1.3 var(--body);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.program-list .pr-price-value {
+  margin: 0;
+  color: #0a1b33;
+  font: 900 clamp(42px, 3.8vw, 58px)/1 var(--display);
+}
+
+.program-list .pr-price-currency,
+.program-list .pr-price-caption {
+  color: #0a1b33;
+  font: 800 10px/1.3 var(--body);
+  letter-spacing: 0.12em;
+}
+
+.program-list .pr-price-caption {
+  margin-top: 10px;
+  font-size: 9px;
+  opacity: 0.72;
+  letter-spacing: 0.04em;
+}
+
+/* Image exits left; price enters from right, without moving the text. */
+@media (hover: hover) and (pointer: fine) {
+  .program-list .program:hover .pr-image,
+  .program-list .program:focus-visible .pr-image {
+    opacity: 0;
+    transform: translateX(-105%);
+  }
+
+  .program-list .program:hover .pr-price-tag,
+  .program-list .program:focus-visible .pr-price-tag {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%) rotate(0deg);
+  }
+}
+
+.program-list .program .go {
+  position: static;
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: 51px;
+  height: 51px;
+  margin: 0;
+  border: 1px solid #929e96;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--milk);
+  font-size: 24px;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.program-list .program:hover .go,
+.program-list .program:focus-visible .go {
+  background: var(--acid);
+  color: #101214;
+}
+
+/* Narrow laptops/tablets: put visual below text, keep arrow aligned. */
+@media (max-width: 1100px) {
+  .program-list .program {
+    grid-template-columns: 52px minmax(0, 1fr) 54px;
+    gap: 14px;
+    min-height: 0;
+  }
+
+  .program-list .pr-content {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .program-list .pr-num {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .program-list .pr-visual {
+    grid-column: 2;
+    grid-row: 2;
+    width: min(100%, 390px);
+    height: 205px;
+    justify-self: end;
+  }
+
+  .program-list .program .go {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+/* Touch devices: always show full image AND the fee, no hover required. */
+@media (max-width: 760px), (hover: none) {
+  .program-list .pr-visual {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: 100%;
+    height: auto;
+    min-height: 155px;
+    overflow: visible;
+  }
+
+  .program-list .pr-visual .pr-image {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 155px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .program-list .pr-price-tag {
+    position: relative;
+    top: auto;
+    right: auto;
+    flex: 0 0 130px;
+    width: 130px;
+    min-height: 115px;
+    padding: 16px 9px 16px 24px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .program-list .pr-price-value {
+    font-size: 38px;
+  }
+
+  .program-list .pr-price-label {
+    font-size: 8px;
+  }
+
+  .program-list .pr-price-caption {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 460px) {
+  .program-list .program {
+    grid-template-columns: 38px minmax(0, 1fr) 42px;
+    gap: 10px;
+    padding: 24px 0;
+  }
+
+  .program-list .pr-content h3 {
+    font-size: clamp(28px, 8vw, 38px);
+    overflow-wrap: anywhere;
+  }
+
+  .program-list .program .go {
+    width: 42px;
+    height: 42px;
+  }
+
+  .program-list .pr-visual {
+    gap: 8px;
+  }
+
+  .program-list .pr-price-tag {
+    flex-basis: 115px;
+    width: 115px;
+  }
+
+  .program-list .pr-price-value {
+    font-size: 33px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .program-list .pr-image,
+  .program-list .pr-price-tag,
+  .program-list .program .go {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — MANIFESTO BRAND LOGO
+========================================== */
+
+.manifesto-logo {
+  position: relative;
+  z-index: 2;
+
+  width: min(60%, 340px);
+  aspect-ratio: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: rotate(-8deg);
+
+  filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.28));
+
+  transition:
+    transform 500ms ease,
+    filter 500ms ease;
+}
+
+.manifesto-logo-image {
+  display: block;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Premium subtle hover effect */
+@media (hover: hover) {
+  .manifesto-art:hover .manifesto-logo {
+    transform: rotate(0deg) scale(1.05);
+
+    filter: drop-shadow(0 32px 55px rgba(0, 0, 0, 0.35));
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .manifesto-logo {
+    width: min(62%, 260px);
+  }
+}
+
+/* Small phones */
+@media (max-width: 390px) {
+  .manifesto-logo {
+    width: min(65%, 220px);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .manifesto-logo {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — ORIGINAL LEARNING EXPERIENCE
+========================================== */
+
+.method {
+  background: var(--milk);
+  color: #181c1c;
+  position: relative;
+  overflow: hidden;
+}
+
+.method .eyebrow::before {
+  color: #496b54;
+}
+
+.method h2 {
+  color: #161b1b;
+}
+
+.method .heading-line p {
+  color: #5f6b66;
+}
+
+/* Four horizontal cards */
+.method-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.method-box {
+  background: #e8e7df;
+  min-height: 294px;
+  padding: 28px 23px;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.25s ease;
+}
+
+.method-box:hover {
+  background: #d9fe66;
+}
+
+.method-box .num {
+  font: 800 73px/0.9 var(--display);
+  letter-spacing: -0.02em;
+  color: #a6aea1;
+}
+
+.method-box h3 {
+  font: 800 31px/0.99 var(--display);
+  text-transform: uppercase;
+  margin: auto 0 13px;
+}
+
+.method-box p {
+  font-size: 13px;
+  color: #56615e;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Tablet */
+@media (max-width: 760px) {
+  .method-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 460px) {
+  .method-track {
+    grid-template-columns: 1fr;
+  }
+
+  .method-box {
+    min-height: 230px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .method-box {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — STICKY SHRINKING HEADER
+========================================== */
+
+/* Header always remains at the top */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  width: 100%;
+
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+/* Smooth height transition */
+.nav .navrow {
+  height: 81px;
+
+  transition:
+    height 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    gap 300ms ease;
+}
+
+/* Logo - normal size */
+.nav .brand img {
+  width: 196px !important;
+  height: auto !important;
+  max-height: 44px;
+  object-fit: contain;
+
+  transition:
+    width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 350ms ease;
+}
+
+/* Registration button */
+.nav .navend > .cta {
+  transition:
+    padding 350ms ease,
+    transform 250ms ease,
+    background-color 250ms ease;
+}
+
+/* ==========================================
+   SHRUNK HEADER STATE
+========================================== */
+
+.nav.nav-shrink {
+  background: rgba(16, 18, 20, 0.96);
+  border-bottom-color: rgba(217, 254, 102, 0.16);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(24px);
+}
+
+/* Smaller header height */
+.nav.nav-shrink .navrow {
+  height: 62px;
+}
+
+/* Smaller logo */
+.nav.nav-shrink .brand img {
+  width: 164px !important;
+  max-height: 37px;
+}
+
+/* Compact register button */
+.nav.nav-shrink .navend > .cta {
+  padding: 9px 15px;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 768px) {
+  .nav .navrow {
+    height: 69px;
+    gap: 12px;
+  }
+
+  .nav.nav-shrink .navrow {
+    height: 58px;
+  }
+
+  .nav .brand img {
+    width: clamp(105px, 29vw, 150px) !important;
+    max-height: 38px;
+  }
+
+  .nav.nav-shrink .brand img {
+    width: clamp(95px, 25vw, 130px) !important;
+    max-height: 31px;
+  }
+
+  .nav .navend {
+    gap: 12px;
+  }
+
+  .nav .language-trigger {
+    min-height: 38px;
+  }
+
+  .nav.nav-shrink .language-trigger {
+    min-height: 34px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav .navrow,
+  .nav .brand img,
+  .nav .navend > .cta,
+  .nav .language-trigger {
+    transition: none !important;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — HERO LAYOUT REFINEMENT
+   Larger heading + Smaller centered frame
+========================================== */
+
+@media (min-width: 769px) {
+  /* Hero height matches actual desktop header */
+  .film.hero-compact {
+    height: calc(100svh - 81px) !important;
+    min-height: 560px !important;
+  }
+
+  /* Balanced two-column layout */
+  .hero-compact .film-body {
+    grid-template-columns:
+      minmax(0, 0.96fr)
+      minmax(0, 1.04fr) !important;
+
+    gap: clamp(24px, 3vw, 48px) !important;
+
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* Remove excessive empty space below heading */
+  .hero-compact .hero-copy {
+    padding: 0 !important;
+    align-self: center;
+    min-width: 0;
+  }
+
+  /* Larger headline */
+  .hero-compact .hero-copy h1 {
+    font-size: clamp(65px, min(6.4vw, 12vh), 112px) !important;
+
+    line-height: 0.91 !important;
+    letter-spacing: -0.018em;
+
+    margin: 16px 0 24px !important;
+  }
+
+  /* Description remains readable */
+  .hero-compact .hero-copy p {
+    font-size: clamp(15px, 1.05vw, 18px) !important;
+    line-height: 1.65 !important;
+    max-width: 580px;
+  }
+
+  /* Right-hand visual container */
+  .hero-compact .film-art {
+    position: relative;
+    width: 100%;
+    height: 100% !important;
+    max-height: 510px !important;
+    min-height: 0 !important;
+    align-self: center;
+  }
+
+  /* Smaller frame with breathing room */
+  .hero-compact .spotlight {
+    position: absolute;
+
+    top: 10% !important;
+    right: 5% !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 88% !important;
+    height: 76% !important;
+
+    max-width: 720px !important;
+    max-height: 440px !important;
+
+    border-width: 9px;
+    border-radius: 15px;
+
+    transform: rotate(4deg);
+
+    box-shadow:
+      22px 22px 0 var(--acid),
+      0 22px 55px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Artwork inside the white frame */
+  .hero-compact .spotlight img.hero-slide-image {
+    width: 86% !important;
+    height: 86% !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    object-fit: contain !important;
+    object-position: center !important;
+
+    transform: scale(1.15);
+  }
+
+  /* Keep decorative labels positioned correctly */
+  .hero-compact .livebadge {
+    top: 5%;
+    left: 8%;
+  }
+
+  .hero-compact .plate {
+    left: -2%;
+    bottom: 19%;
+  }
+
+  /* Smaller heading on short desktop screens */
+  @media (max-height: 720px) {
+    .hero-compact .hero-copy h1 {
+      font-size: clamp(55px, 9vh, 78px) !important;
+    }
+
+    .hero-compact .film-art {
+      max-height: 420px !important;
+    }
+
+    .hero-compact .spotlight {
+      max-height: 350px !important;
+    }
+  }
+}
+
+/* Preserve the current mobile hero layout */
+@media (max-width: 768px) {
+  .hero-compact .hero-copy {
+    padding: 0 !important;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — FIRST-SCREEN HERO FIX
+   Show all programme tabs without scrolling
+========================================== */
+
+@media (min-width: 769px) {
+  /* Hero + header = exactly one viewport */
+  .film.hero-compact {
+    height: calc(100vh - 81px) !important;
+    height: calc(100svh - 81px) !important;
+
+    min-height: 0 !important;
+    max-height: none !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  /* Main content takes only remaining space */
+  .hero-compact .film-body {
+    flex: 1 1 0% !important;
+
+    min-height: 0 !important;
+    height: 0 !important;
+
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+
+    align-items: center !important;
+  }
+
+  /* Make the left content vertically balanced */
+  .hero-compact .hero-copy {
+    padding: 0 !important;
+    align-self: center;
+  }
+
+  /* Responsive headline for laptop screen heights */
+  .hero-compact .hero-copy h1 {
+    font-size: clamp(52px, min(6vw, 11vh), 105px) !important;
+
+    line-height: 0.91 !important;
+    margin: 12px 0 18px !important;
+  }
+
+  .hero-compact .hero-copy p {
+    font-size: clamp(14px, 1.05vw, 17px) !important;
+    line-height: 1.55 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Limit right artwork to available hero height */
+  .hero-compact .film-art {
+    height: 100% !important;
+    max-height: 490px !important;
+    min-height: 0 !important;
+    align-self: center;
+  }
+
+  /* Keep frame away from top and bottom */
+  .hero-compact .spotlight {
+    top: 10% !important;
+    right: 5% !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 88% !important;
+    height: 74% !important;
+    max-height: 400px !important;
+  }
+
+  /* Image stays inside frame */
+  .hero-compact .spotlight img.hero-slide-image {
+    width: 86% !important;
+    height: 86% !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    object-fit: contain !important;
+    transform: scale(1.12);
+  }
+
+  /* Reserve bottom space for programme tabs */
+  .hero-compact .slidesbar {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    margin-top: auto !important;
+    width: 100%;
+  }
+
+  .hero-compact .slidesrow {
+    min-height: 70px;
+  }
+
+  .hero-compact .slide-tab {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — MOBILE HERO REBUILD
+   Applies only on tablets and phones
+========================================== */
+
+@media (max-width: 768px) {
+  /* Allow content to determine section height */
+  .film.hero-compact,
+  .hero-compact {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Stack heading and artwork vertically */
+  .hero-compact .film-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+
+    padding-top: 30px !important;
+    padding-bottom: 26px !important;
+
+    gap: 24px !important;
+  }
+
+  /* Hero heading area */
+  .hero-compact .hero-copy {
+    width: 100%;
+    min-width: 0;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+  }
+
+  /* Smaller mobile eyebrow */
+  .hero-compact .eyebrow {
+    font-size: 10px;
+    line-height: 1.6;
+    letter-spacing: 0.15em;
+  }
+
+  /* Large but contained heading */
+  .hero-compact .hero-copy h1 {
+    font-size: clamp(54px, 12vw, 80px) !important;
+    line-height: 0.88 !important;
+    letter-spacing: -0.015em !important;
+
+    margin: 19px 0 20px !important;
+  }
+
+  /* Keep description fully visible */
+  .hero-compact .hero-copy p {
+    width: 100%;
+    max-width: 520px;
+
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Artwork gets its own dedicated space */
+  .hero-compact .film-art {
+    width: 100%;
+    height: clamp(230px, 65vw, 360px) !important;
+
+    min-height: 0 !important;
+    max-height: none !important;
+
+    position: relative;
+    margin: 0 !important;
+
+    align-self: stretch !important;
+    flex: none !important;
+  }
+
+  /* Smaller decorative circle */
+  .hero-compact .back-circle {
+    width: 70%;
+    height: 85%;
+    right: 5%;
+    top: 5%;
+  }
+
+  /* Smaller tilted image frame */
+  .hero-compact .spotlight {
+    position: absolute !important;
+
+    inset: auto !important;
+    top: 12% !important;
+    right: 7% !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 82% !important;
+    height: 68% !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    border: 6px solid #f3efe6 !important;
+    border-radius: 12px !important;
+
+    transform: rotate(3deg) !important;
+
+    box-shadow:
+      12px 12px 0 var(--acid),
+      0 20px 35px rgba(0, 0, 0, 0.35) !important;
+
+    overflow: hidden !important;
+  }
+
+  /* Image itself */
+  .hero-compact .spotlight img.hero-slide-image {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    object-fit: contain !important;
+    object-position: center !important;
+
+    transform: none !important;
+  }
+
+  /* Hide oversized decorative background letter */
+  .hero-compact .bigtype {
+    display: none !important;
+  }
+
+  /* Featured path: below the frame, not over text */
+  .hero-compact .plate {
+    position: absolute !important;
+
+    left: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    right: auto !important;
+
+    width: min(50%, 190px) !important;
+    padding: 12px 14px !important;
+
+    transform: rotate(-3deg) !important;
+
+    z-index: 4 !important;
+  }
+
+  .hero-compact .plate span {
+    font-size: 9px !important;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-compact .plate strong {
+    font-size: clamp(18px, 5vw, 24px) !important;
+    margin-top: 6px !important;
+    line-height: 1 !important;
+  }
+
+  /* Small chapter badge */
+  .hero-compact .livebadge {
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 2% !important;
+
+    padding: 7px 10px !important;
+
+    font-size: 8px !important;
+    letter-spacing: 0.08em !important;
+
+    transform: rotate(-4deg) !important;
+    z-index: 5 !important;
+  }
+
+  /* Tabs appear after artwork */
+  .hero-compact .slidesbar {
+    position: relative !important;
+    margin-top: 0 !important;
+    flex: 0 0 auto !important;
+    width: 100%;
+  }
+
+  .hero-compact .slidesrow {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    min-height: 62px;
+  }
+
+  .hero-compact .slide-tab {
+    min-width: 0;
+    padding: 13px 6px !important;
+
+    font-size: clamp(9px, 2.3vw, 11px) !important;
+    line-height: 1.3;
+
+    text-align: center;
+    letter-spacing: 0 !important;
+  }
+
+  .hero-compact .slide-tab i {
+    display: block;
+    margin: 0 0 5px;
+    font-size: 10px;
+  }
+
+  .hero-compact .slide-arrows {
+    display: none !important;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — CONSISTENT MOBILE HEADINGS
+   Programs, Method, Manifesto, CTA
+========================================== */
+
+@media (max-width: 768px) {
+  /* Shared section heading typography */
+  .heading-line h2,
+  .manifesto-copy h2,
+  .call h2 {
+    font-family: var(--display) !important;
+    font-size: clamp(44px, 11.5vw, 58px) !important;
+    font-weight: 900 !important;
+    line-height: 0.96 !important;
+    letter-spacing: -0.015em !important;
+    text-transform: uppercase;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  /* CHOOSE YOUR PROGRAM
+     FROM LESSON TO LAUNCH */
+  .heading-line h2 {
+    margin: 14px 0 0 !important;
+    max-width: 100%;
+  }
+
+  .heading-line {
+    margin-bottom: 34px !important;
+  }
+
+  /* KNOWLEDGE IS THE START */
+  .manifesto-copy h2 {
+    margin: 20px 0 24px !important;
+    max-width: 100%;
+  }
+
+  .manifesto-copy {
+    padding: 55px 6% !important;
+  }
+
+  /* YOUR NEXT MOVE STARTS HERE */
+  .call h2 {
+    margin: 16px 0 22px !important;
+    max-width: 100%;
+  }
+
+  .call {
+    padding: 65px 0 !important;
+  }
+
+  /* Section eyebrow labels */
+  .section .eyebrow,
+  .manifesto-copy .eyebrow,
+  .call .eyebrow {
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: 0.16em;
+  }
+}
+
+/* Small phones */
+@media (max-width: 390px) {
+  .heading-line h2,
+  .manifesto-copy h2,
+  .call h2 {
+    font-size: clamp(40px, 11vw, 44px) !important;
+  }
+
+  .heading-line {
+    margin-bottom: 28px !important;
+  }
+
+  .manifesto-copy {
+    padding: 45px 5% !important;
+  }
+
+  .call {
+    padding: 50px 0 !important;
+  }
+}
+
+/* ==========================================
+   NEXTWAVE — MOBILE FOOTER 3 COLUMNS
+========================================== */
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 45px 0 25px;
+  }
+
+  .footgrid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    column-gap: 12px !important;
+    row-gap: 35px !important;
+  }
+
+  /* Logo and description occupy full width */
+  .footgrid > div:first-child {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+  }
+
+  /* All three navigation columns share one row */
+  .footgrid > div:not(:first-child) {
+    min-width: 0;
+  }
+
+  /* Footer column titles */
+  .footer h4 {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    margin: 0 0 15px;
+    overflow-wrap: normal;
+  }
+
+  /* Footer links */
+  .footer a:not(.brand) {
+    font-size: 11px;
+    line-height: 1.5;
+    margin: 10px 0;
+    overflow-wrap: anywhere;
+  }
+
+  .footer p {
+    max-width: 360px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 360px) {
+  .footgrid {
+    column-gap: 7px !important;
+  }
+
+  .footer h4 {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .footer a:not(.brand) {
+    font-size: 10px;
   }
 }
