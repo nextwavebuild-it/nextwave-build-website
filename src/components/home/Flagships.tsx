@@ -3,6 +3,7 @@ import Image from "next/image";
 const programmes = [
   {
     number: "01",
+    flagship: "ECOMMERCE",
     title: "E-Commerce & Dropshipping",
     description:
       "Learn how to launch and manage an online store through live, mentor-led sessions. Understand product research, store setup, supplier selection, marketing fundamentals and order management. Build your own practice store with guidance from your mentor, then receive feedback to improve it.",
@@ -12,6 +13,7 @@ const programmes = [
   },
   {
     number: "02",
+    flagship: "FREELANCING",
     title: "Freelancing & Online Work",
     description:
       "Learn how to turn your skills into services through live mentor-led training. Explore freelancing platforms, building a professional portfolio, writing proposals, communicating with clients and managing projects. Create your own portfolio and practise client-style assignments, with constructive feedback from your mentor.",
@@ -21,6 +23,7 @@ const programmes = [
   },
   {
     number: "03",
+    flagship: "AI",
     title: "Technology & AI",
     description:
       "Discover practical technology and AI skills through interactive, mentor-led sessions. Learn technology fundamentals, useful AI tools, prompt writing, automation concepts and practical applications. Work on your own technology or AI-based project while your mentor provides guidance, troubleshooting support and feedback.",
@@ -49,9 +52,9 @@ export default function Flagships() {
           {programmes.map((programme) => (
             <a
               key={programme.number}
-              href="https://portal.nextwavebuild.com/register"
+              href={`https://portal.nextwavebuild.com/register?flagship=${programme.flagship}`}
               className="program reveal"
-              aria-label={`${programme.title} — ${programme.price} USD`}
+              aria-label={`${programme.title} — ${programme.price}`}
             >
               <span className="pr-num">{programme.number}</span>
 
