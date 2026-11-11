@@ -367,7 +367,7 @@ export default function LeadsPage() {
             <h2 id="leads-success-title">Thank You!</h2>
 
             <p>
-              Your demo form has been submitted successfully. You&apos;ve taken
+              Your form has been submitted successfully. You&apos;ve taken
               the first step toward building your future.
             </p>
 
