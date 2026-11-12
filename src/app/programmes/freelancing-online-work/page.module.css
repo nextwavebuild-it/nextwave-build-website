@@ -1,0 +1,163 @@
+/* NextWave Build — Freelancing & Online Work.
+   Scoped to this route; reuses exact homepage design tokens. */
+.page{background:var(--black,#101214);color:var(--milk,#f4f1e9);font-family:var(--body,"DM Sans",sans-serif);width:100%}
+.page *,.page *::before,.page *::after{box-sizing:border-box}
+.page h1,.page h2,.page h3,.page p{margin:0}
+.page a{text-decoration:none;color:inherit}
+.page section[id]{scroll-margin-top:90px}
+.shell{width:100%;max-width:1510px;margin-inline:auto;padding-inline:5%}
+.eyebrow{display:inline-block;font:800 11px/1.5 var(--body);text-transform:uppercase;letter-spacing:.25em}
+.eyebrow::before{content:"●";font-size:8px;color:var(--acid);margin-right:12px}
+.heading h2{font:900 clamp(55px,7vw,110px)/.91 var(--display);letter-spacing:.005em;text-transform:uppercase;margin-top:18px}
+.heading>p{max-width:580px;color:#aeb5b6;font:400 15px/1.85 var(--body);margin-top:25px}
+.button{display:inline-flex;align-items:center;justify-content:space-between;gap:35px;min-height:55px;padding:15px 22px;border:1px solid transparent;font:900 12px/1.4 var(--body);text-transform:uppercase;letter-spacing:.03em;transition:transform .25s,background-color .25s,border-color .25s}
+.buttonAcid{background:var(--acid);color:#11190e!important;border-color:var(--acid)}
+.buttonAcid:hover,.finalButton:hover{background:#edffae;transform:translateY(-3px)}
+.buttonOutline{background:transparent;color:var(--milk)!important;border-color:#88908d}
+.buttonOutline:hover{color:var(--acid)!important;border-color:var(--acid);transform:translateY(-3px)}
+/* Hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 72% 38%,#2b3440 0,#111517 47%,#0d1012 88%)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.1;background:repeating-linear-gradient(0deg,#eee2 0,#eee2 1px,transparent 1px,transparent 3px)}
+.heroGlow{position:absolute;width:720px;height:720px;right:-12%;top:-20%;border:1px solid #f7f8f63b;border-radius:50%;box-shadow:0 0 0 88px #f8ffed07,0 0 0 190px #f8ffed05;pointer-events:none}
+.heroGlow::before{content:"";position:absolute;inset:70px;border:1px solid #d9fe6663;border-radius:50%}
+.heroGrid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(28px,4vw,75px);min-height:640px;padding-block:75px 80px}
+.heroCopy{z-index:5;position:relative}
+.heroCopy h1{font:900 clamp(60px,6.5vw,108px)/.91 var(--display);text-transform:uppercase;letter-spacing:-.018em;margin:22px 0 27px}
+.heroCopy h1 span{color:var(--acid)}
+.heroCopy>p{max-width:555px;font-size:15px;line-height:1.85;color:#bbc6c4}
+.heroActions{display:flex;align-items:center;flex-wrap:wrap;gap:25px;margin-top:32px}
+.textLink{display:inline-flex;align-items:center;gap:14px;font-size:12px;font-weight:800;letter-spacing:.04em;border-bottom:1px solid #8a9592;padding-bottom:5px}
+.textLink:hover{color:var(--acid)}
+.heroStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:520px;border-top:1px solid #ffffff29;margin-top:55px;padding-top:25px}
+.heroStats>div{display:flex;flex-direction:column;gap:8px}
+.heroStats strong{font:900 35px/1 var(--display)}
+.heroStats span{color:#aeb5b6;font-size:10px;font-weight:700;letter-spacing:.08em}
+.heroArt{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:500px;min-width:0}
+.heroCircle{position:absolute;width:min(95%,500px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 46% 48%,#5261b6,#172a44 55%,transparent 73%)}
+.heroFrame{position:relative;width:87%;height:72%;overflow:hidden;border:9px solid #f3efe6;border-radius:15px;background:#19292e;transform:rotate(4deg);box-shadow:22px 22px 0 var(--acid),0 22px 55px #0007;transition:transform .35s}
+.heroFrame:hover{transform:rotate(1deg) scale(1.02)}
+.heroImage{object-fit:contain;object-position:center;padding:6%}
+.heroSticker{position:absolute;top:4%;left:5%;padding:12px 16px;background:var(--acid);color:var(--black);font:800 10px/1.5 var(--body);letter-spacing:.13em;transform:rotate(-7deg);z-index:3}
+.heroPlate{position:absolute;left:0;bottom:7%;width:250px;padding:25px;background:var(--deep);border:1px solid #626968;transform:rotate(-6deg);box-shadow:0 25px 35px #0008;z-index:4}
+.heroPlate span{display:block;color:var(--acid);font-size:10px;font-weight:800;letter-spacing:.12em}
+.heroPlate strong{display:block;font:800 32px/1.04 var(--display);text-transform:uppercase;margin-top:12px}
+.heroBottom{position:relative;z-index:4;background:#101214db;border-top:1px solid #ffffff35}
+.heroBottom .shell{display:flex;justify-content:space-between;gap:20px;padding-block:21px;font-size:10px;font-weight:800;letter-spacing:.1em}
+.heroBottom a:hover{color:var(--acid)}
+/* Cream programme introduction */
+.intro{background:var(--milk);color:#181c1c;padding:120px 0}
+.introGrid{display:grid;grid-template-columns:1fr .85fr;align-items:center;gap:100px}
+.intro .eyebrow::before,.skills .eyebrow::before,.method .eyebrow::before,.mentorship .eyebrow::before{color:#496b54}
+.introContent{padding-top:35px}
+.introLead{font-size:clamp(19px,2vw,25px)!important;font-weight:700;line-height:1.5!important;color:#181c1c!important;margin-bottom:25px!important}
+.introContent p{color:#56615e;font-size:15px;line-height:1.9;margin-bottom:20px}
+.darkLink{display:inline-block;margin-top:18px;padding-bottom:8px;border-bottom:1px solid #181c1c;font-size:12px;font-weight:800;letter-spacing:.05em}
+.darkLink:hover{color:#496b54}
+/* Skill cards modeled after homepage Method */
+.skills{background:var(--milk);color:#181c1c;padding:100px 0 125px}
+.skills .heading{margin-bottom:55px}
+.skills .heading>p,.mentorship .heading>p{color:#5f6b66}
+.skillsGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.skillCard{min-width:0;min-height:310px;padding:28px 25px;display:flex;flex-direction:column;justify-content:space-between;background:#e8e7df;color:#181c1c;transition:background-color .35s,transform .35s,box-shadow .35s}
+.skillCard:hover{background:var(--acid);transform:scale(1.025);box-shadow:0 18px 35px #0002;z-index:2}
+.skillTop{display:flex;justify-content:space-between;align-items:flex-start}
+.skillTop span:first-child{font:800 70px/.9 var(--display);color:#a6aea1;transition:color .3s}
+.skillCard:hover .skillTop span:first-child{color:#172015}
+.skillTop span:last-child{font-size:25px;color:#526159}
+.skillCard h3{font:800 31px/1 var(--display);text-transform:uppercase;margin-bottom:14px}
+.skillCard p{font-size:13px;line-height:1.7;color:#56615e}
+/* Curriculum */
+.curriculum{background:var(--deep);color:var(--milk);padding:120px 0}
+.curriculumHeading{display:flex;align-items:flex-end;justify-content:space-between;gap:45px}
+.weekCount{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.weekCount strong{color:var(--acid);font:900 130px/.8 var(--display)}
+.weekCount span{margin-top:15px;font-size:11px;font-weight:800;letter-spacing:.15em}
+.roadmapGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:60px}
+.roadmapCard{display:flex;flex-direction:column;min-width:0;min-height:540px;padding:27px 24px;background:#24282b;border:1px solid #ffffff20;transition:transform .35s,border-color .35s,background-color .35s}
+.roadmapCard:hover{border-color:var(--acid);background:#2a3030;transform:translateY(-6px)}
+.roadmapTop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px}
+.roadmapTop span{font-size:10px;font-weight:800;letter-spacing:.12em;color:#aeb5b6}
+.roadmapTop strong{font:800 56px/.9 var(--display);color:var(--acid)}
+.roadmapWeeks{color:var(--acid);font-size:11px;font-weight:800;letter-spacing:.11em;margin-bottom:12px}
+.roadmapCard h3{font:800 34px/1 var(--display);text-transform:uppercase;margin-bottom:18px}
+.roadmapCard>p{min-height:90px;color:#aeb5b6;font-size:13px;line-height:1.7}
+.topicList{display:flex;flex-direction:column;gap:16px;border-top:1px solid #ffffff24;padding-top:25px;margin-top:20px;margin-bottom:30px}
+.topicList>div{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.6;color:#d0d8d6}
+.topicList span{color:var(--acid);flex-shrink:0}
+.milestone{margin-top:auto;padding:17px;display:flex;flex-direction:column;gap:11px;background:#171b1e}
+.milestone span{font-size:10px;color:var(--acid);font-weight:800;letter-spacing:.09em}
+.milestone strong{font-size:12px;line-height:1.6}
+.curriculumFooter{display:flex;align-items:center;justify-content:space-between;gap:35px;margin-top:45px}
+.curriculumFooter p{color:#aeb5b6;max-width:460px;line-height:1.8;font-size:14px}
+/* Learning-method cards: continuous 2-second rotation, 8-second cycle */
+.method{background:var(--milk);color:#181c1c;padding:120px 0}
+.method .heading{margin-bottom:55px}
+.methodTrack{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:stretch}
+.methodCard{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:294px;padding:28px 23px;background:#e8e7df;transform-origin:center;animation:activeCard 8s linear infinite}
+.methodCard:nth-child(1){animation-delay:0s}.methodCard:nth-child(2){animation-delay:-6s}.methodCard:nth-child(3){animation-delay:-4s}.methodCard:nth-child(4){animation-delay:-2s}
+.methodNumber{font:800 73px/.9 var(--display);letter-spacing:-.02em;color:#a6aea1;animation:activeNumber 8s linear infinite}
+.methodCard:nth-child(1) .methodNumber{animation-delay:0s}.methodCard:nth-child(2) .methodNumber{animation-delay:-6s}.methodCard:nth-child(3) .methodNumber{animation-delay:-4s}.methodCard:nth-child(4) .methodNumber{animation-delay:-2s}
+.methodCard h3{font:800 31px/.99 var(--display);text-transform:uppercase;margin-bottom:13px}
+.methodCard p{font-size:13px;line-height:1.7;color:#56615e}
+@keyframes activeCard{0%,24.9%{background:#d9fe66;box-shadow:0 18px 35px #0002;transform:scale(1.035)}25%,100%{background:#e8e7df;box-shadow:none;transform:scale(1)}}
+@keyframes activeNumber{0%,24.9%{color:#172015}25%,100%{color:#a6aea1}}
+@media(hover:hover) and (pointer:fine){.methodCard:hover{animation-play-state:paused;background:var(--acid)!important;transform:scale(1.035);z-index:3;box-shadow:0 18px 35px #0002}.methodCard:hover .methodNumber{animation-play-state:paused;color:#172015!important}}
+/* Portfolio */
+.project{background:var(--black);padding:125px 0}
+.projectGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:85px;align-items:center}
+.projectVisual{position:relative;min-width:0;min-height:520px;padding:25px;background:#19292e;border:1px solid #ffffff29;overflow:hidden}
+.projectVisual::before{content:"";position:absolute;width:450px;height:450px;top:50%;left:50%;border:100px solid #2b5760;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 100px #d9fe6611}
+.projectVisualLabel{position:relative;z-index:3;display:flex;justify-content:space-between;gap:20px;font-size:10px;font-weight:800;letter-spacing:.15em}
+.projectImageWrap{position:absolute;inset:50px 20px}
+.projectImage{object-fit:contain;filter:drop-shadow(0 28px 25px #0005);transition:transform .4s}
+.projectVisual:hover .projectImage{transform:scale(1.055)}
+.projectBadge{position:absolute;z-index:3;bottom:20px;right:15px;padding:13px 17px;color:var(--black);background:var(--acid);font-size:10px;font-weight:900;letter-spacing:.07em;transform:rotate(-4deg)}
+.projectCopy .heading h2{font-size:clamp(55px,5vw,85px)}
+.projectSteps{margin:35px 0;border-top:1px solid #ffffff29}
+.projectSteps>div{display:flex;gap:22px;align-items:flex-start;padding:17px 0;border-bottom:1px solid #ffffff29}
+.projectSteps span{flex-shrink:0;color:var(--acid);font:800 16px var(--display)}
+.projectSteps p{color:#bbc6c4;font-size:14px;line-height:1.7}
+/* Mentorship */
+.mentorship{padding:125px 0;background:var(--milk);color:#181c1c}
+.mentorIntro{display:flex;justify-content:space-between;align-items:flex-end;gap:45px;margin-bottom:55px}
+.mentorHighlight{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;font:800 30px/1.1 var(--display);text-transform:uppercase}
+.mentorHighlight span{color:#496b54}
+.mentorGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.mentorCard{min-height:290px;padding:30px;background:#e8e7df;display:flex;flex-direction:column;transition:background-color .3s,transform .3s}
+.mentorCard:hover{background:var(--acid);transform:translateY(-5px)}
+.mentorNumber{font:800 70px/1 var(--display);color:#a6aea1;margin-bottom:45px}
+.mentorCard:hover .mentorNumber{color:#172015}
+.mentorCard h3{font:800 31px/1 var(--display);text-transform:uppercase;margin-bottom:13px}
+.mentorCard p{color:#56615e;font-size:13px;line-height:1.7}
+/* Audience */
+.audience{background:var(--deep);padding:120px 0}
+.audienceGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:85px;align-items:center}
+.audienceList{border-top:1px solid #ffffff29}
+.audienceList>div{display:grid;grid-template-columns:35px minmax(0,1fr) 25px;gap:15px;align-items:center;padding:23px 10px;border-bottom:1px solid #ffffff29;transition:background-color .3s,padding .3s}
+.audienceList>div:hover{background:#24282b;padding-left:20px}
+.audienceList span{color:var(--acid);font:800 18px var(--display)}
+.audienceList strong{font:800 25px var(--display);text-transform:uppercase}
+/* FAQ */
+.faq{padding:125px 0;background:var(--black)}
+.faqGrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:85px}
+.faqIntro>p{color:#aeb5b6;font-size:14px;line-height:1.8;margin-top:25px;margin-bottom:30px}
+.faqList{border-top:1px solid #ffffff29}
+.faqItem{border-bottom:1px solid #ffffff29}
+.faqItem summary{display:flex;align-items:center;gap:20px;list-style:none;padding:24px 0;cursor:pointer}
+.faqItem summary::-webkit-details-marker{display:none}
+.faqItem summary>span:first-child{color:var(--acid);font:800 15px var(--display)}
+.faqItem summary strong{flex:1;font-size:14px;font-weight:700;line-height:1.6}
+.faqPlus{color:var(--acid);font-size:25px;transition:transform .25s}
+.faqItem[open] .faqPlus{transform:rotate(45deg)}
+.faqItem>p{color:#aeb5b6;font-size:13px;line-height:1.9;padding:0 30px 25px 35px}
+/* Blue homepage-style CTA */
+.finalCta{background:var(--blue);padding:95px 0;color:#fff}
+.finalGrid{display:flex;justify-content:space-between;align-items:center;gap:50px}
+.finalCta h2{font:900 clamp(65px,7vw,115px)/.9 var(--display);text-transform:uppercase;letter-spacing:.005em;margin-top:20px}
+.finalCta p{max-width:570px;color:#e0e5ff;font-size:14px;line-height:1.8;margin-top:25px}
+.finalButton{flex-shrink:0;display:inline-flex;align-items:center;justify-content:space-between;gap:35px;min-width:200px;padding:17px 22px;background:var(--acid);color:#11190e!important;font-size:12px;font-weight:900;transition:background-color .25s,transform .25s}
+/* Responsive layouts */
+@media(max-width:1100px){.heroGrid{gap:30px}.heroCopy h1{font-size:clamp(57px,6.7vw,83px)}.heroArt{height:400px}.heroPlate{width:210px;padding:18px}.heroPlate strong{font-size:26px}.introGrid,.projectGrid,.audienceGrid,.faqGrid{gap:45px}.roadmapGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.roadmapCard{min-height:460px}.roadmapCard>p{min-height:auto}.methodTrack{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:768px){.heading h2{font-size:clamp(46px,11vw,66px);line-height:.96}.heading>p{font-size:14px}.heroGrid{grid-template-columns:1fr;gap:25px;min-height:0;padding-block:55px}.heroCopy h1{font-size:clamp(54px,11.5vw,80px);line-height:.92}.heroCopy>p{font-size:14px}.heroArt{height:clamp(290px,65vw,450px)}.heroFrame{width:80%;height:72%;border-width:6px;box-shadow:12px 12px 0 var(--acid),0 20px 35px #0006}.heroPlate{left:3%;bottom:1%;width:190px;padding:15px}.heroPlate strong{font-size:22px}.heroSticker{top:3%;left:6%;padding:9px 12px;font-size:9px}.heroBottom .shell{flex-wrap:wrap;gap:12px;font-size:9px}.intro,.skills,.curriculum,.method,.project,.mentorship,.audience,.faq{padding:80px 0}.introGrid,.projectGrid,.audienceGrid,.faqGrid{grid-template-columns:1fr}.introContent{padding-top:0}.skillsGrid,.mentorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.weekCount{display:none}.roadmapGrid{margin-top:40px}.curriculumFooter{flex-direction:column;align-items:flex-start}.mentorIntro{display:block}.mentorHighlight{align-items:flex-start;margin-top:30px}.projectVisual{min-height:400px}.finalGrid{align-items:flex-start;flex-direction:column}.finalCta h2{font-size:clamp(55px,11vw,85px)}}
+@media(max-width:480px){.eyebrow{font-size:10px;letter-spacing:.13em}.heroGrid{padding-top:40px}.heroCopy h1{font-size:clamp(45px,11.5vw,62px);overflow-wrap:anywhere}.heroActions{align-items:flex-start;flex-direction:column;gap:23px}.heroStats{gap:10px;margin-top:40px}.heroStats strong{font-size:27px}.heroStats span{font-size:9px}.heroArt{height:285px}.heroFrame{width:85%;height:66%}.heroPlate{bottom:0;left:0;width:160px;padding:12px}.heroPlate strong{font-size:19px}.heroPlate span{font-size:8px}.heroSticker{left:2%;font-size:8px}.heroBottom .shell>span:nth-child(2){display:none}.intro,.skills,.curriculum,.method,.project,.mentorship,.audience,.faq{padding:70px 0}.skillsGrid,.roadmapGrid,.methodTrack,.mentorGrid{grid-template-columns:1fr}.skillCard{min-height:250px}.skillTop span:first-child{font-size:61px}.roadmapCard{min-height:0}.roadmapTop{margin-bottom:25px}.methodCard{min-height:230px}.methodCard h3,.skillCard h3{font-size:29px}.projectVisual{min-height:300px}.projectVisualLabel,.projectBadge{font-size:8px}.mentorCard{min-height:235px}.mentorNumber{margin-bottom:30px}.audienceList strong{font-size:22px}.faqItem summary{gap:13px}.faqItem summary strong{font-size:13px}.faqItem>p{padding-left:30px}.finalCta{padding:70px 0}.finalCta h2{font-size:clamp(48px,12vw,63px)}}
+@media(prefers-reduced-motion:reduce){.page *,.page *::before,.page *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.methodCard:first-child{background:var(--acid)}.methodCard:first-child .methodNumber{color:#172015}}

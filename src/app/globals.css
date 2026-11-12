@@ -3373,3 +3373,325 @@ section {
     transform: none;
   }
 }
+
+/* ==========================================
+   NEXTWAVE — PROGRAMMES DROPDOWN
+   DESKTOP HOVER + MOBILE CLICK
+========================================== */
+
+/* Dropdown container */
+.nav .programmes-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+}
+
+/* Main trigger */
+.nav .programmes-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--milk);
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 250ms ease;
+}
+
+/* Arrow */
+.programmes-chevron {
+  flex-shrink: 0;
+  transition: transform 250ms ease;
+}
+
+/* Menu panel - hidden initially */
+.nav .programmes-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: -35px;
+  width: 350px;
+  padding: 12px;
+  background: #171b1e;
+  border: 1px solid #3a4240;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+  z-index: 1500;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
+
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease,
+    transform 220ms ease;
+}
+
+/* Highlight active section */
+.nav .programmes-trigger.is-active {
+  color: var(--acid);
+}
+
+/* ==========================================
+   DESKTOP HOVER
+========================================== */
+
+/* ==========================================
+   NEXTWAVE — FIXED DESKTOP PROGRAMMES HOVER
+========================================== */
+
+@media (min-width: 769px) {
+  .nav .navlinks {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 100%;
+  }
+
+  .nav .navlinks > a {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+  }
+
+  /* Hover opens dropdown */
+  .nav .programmes-dropdown:not(.hover-suppressed):hover
+  .programmes-dropdown-menu,
+
+  /* Keyboard navigation */
+  .nav .programmes-dropdown:not(.hover-suppressed):focus-within
+  .programmes-dropdown-menu,
+
+  /* Explicit click opens dropdown */
+  .nav .programmes-dropdown.mobile-expanded
+  .programmes-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Keep submenu closed after clicking a link */
+  .nav .programmes-dropdown.hover-suppressed .programmes-dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+
+  .nav .programmes-dropdown:not(.hover-suppressed):hover .programmes-trigger,
+  .nav
+    .programmes-dropdown:not(.hover-suppressed):focus-within
+    .programmes-trigger {
+    color: var(--acid);
+  }
+
+  .nav .programmes-dropdown:not(.hover-suppressed):hover .programmes-chevron,
+  .nav
+    .programmes-dropdown:not(.hover-suppressed):focus-within
+    .programmes-chevron,
+  .nav .programmes-dropdown.mobile-expanded .programmes-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav .programmes-dropdown.hover-suppressed .programmes-chevron {
+    transform: rotate(0deg);
+  }
+}
+
+/* ==========================================
+   DROPDOWN CONTENT
+========================================== */
+
+.programmes-dropdown-label {
+  padding: 13px 12px 17px;
+  color: #aeb5b6;
+  font-family: var(--body);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+/* Programme links */
+.programmes-dropdown-item {
+  display: flex !important;
+  align-items: center;
+  gap: 15px;
+  min-height: 70px;
+  padding: 14px 12px;
+  margin: 0 !important;
+  color: var(--milk) !important;
+  background: transparent;
+  border-bottom: 1px solid #ffffff18;
+  text-decoration: none !important;
+
+  transition:
+    background-color 250ms ease,
+    padding-left 250ms ease;
+}
+
+/* Item hover */
+.programmes-dropdown-item:hover,
+.programmes-dropdown-item.current {
+  background: #24282b;
+  padding-left: 18px;
+}
+
+/* Number */
+.programmes-item-number {
+  flex-shrink: 0;
+  color: var(--acid);
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Programme title */
+.programmes-item-name {
+  flex: 1;
+  font-family: var(--display);
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+/* Arrow */
+.programmes-item-arrow {
+  color: var(--acid);
+  font-size: 21px;
+  transition: transform 250ms ease;
+}
+
+.programmes-dropdown-item:hover .programmes-item-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* View all */
+.programmes-view-all {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 12px 9px;
+  margin: 0 !important;
+  color: var(--acid) !important;
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-decoration: none !important;
+}
+
+/* Prevent header clipping */
+.nav,
+.navrow,
+.navlinks {
+  overflow: visible;
+}
+
+/* ==========================================
+   MOBILE — TAP TO OPEN
+========================================== */
+
+@media (max-width: 768px) {
+  .navlinks.open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .nav .programmes-dropdown {
+    display: block;
+    width: 100%;
+  }
+
+  .nav .programmes-trigger {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 45px;
+    padding: 13px 0;
+    font-size: 12px;
+  }
+
+  /* Mobile submenu hidden */
+  .nav .programmes-dropdown-menu {
+    display: none;
+    position: static;
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background: #202628;
+    border: 1px solid #343c3b;
+    box-shadow: none;
+
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: none;
+  }
+
+  /* Open only when tapped */
+  .nav .programmes-dropdown.mobile-expanded .programmes-dropdown-menu {
+    display: block;
+  }
+
+  .nav .programmes-dropdown.mobile-expanded .programmes-chevron {
+    transform: rotate(180deg);
+  }
+
+  .programmes-dropdown-item {
+    min-height: 60px;
+    padding: 12px 10px;
+    gap: 12px;
+  }
+
+  .programmes-item-name {
+    font-size: 21px;
+  }
+
+  .programmes-item-number {
+    font-size: 21px;
+  }
+
+  .programmes-dropdown-label {
+    font-size: 9px;
+  }
+
+  .programmes-view-all {
+    font-size: 10px;
+  }
+
+  .navlinks.open > a {
+    padding: 13px 0;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .programmes-trigger,
+  .programmes-chevron,
+  .programmes-dropdown-menu,
+  .programmes-dropdown-item,
+  .programmes-item-arrow {
+    transition: none !important;
+  }
+}

@@ -3,6 +3,16 @@ import Image from "next/image";
 const programmes = [
   {
     number: "01",
+    flagship: "AI",
+    title: "Technology & AI",
+    description:
+      "Discover practical technology and AI skills through interactive, mentor-led sessions. Learn technology fundamentals, useful AI tools, prompt writing, automation concepts and practical applications. Work on your own technology or AI-based project while your mentor provides guidance, troubleshooting support and feedback.",
+    image: "/assets/AI-Learning-Workspace.webp",
+    alt: "Technology project illustration",
+    price: "$799",
+  },
+  {
+    number: "02",
     flagship: "ECOMMERCE",
     title: "E-Commerce & Dropshipping",
     description:
@@ -12,7 +22,7 @@ const programmes = [
     price: "$499",
   },
   {
-    number: "02",
+    number: "03",
     flagship: "FREELANCING",
     title: "Freelancing & Online Work",
     description:
@@ -20,16 +30,6 @@ const programmes = [
     image: "/assets/FREELANCER.webp",
     alt: "Creative portfolio illustration",
     price: "$499",
-  },
-  {
-    number: "03",
-    flagship: "AI",
-    title: "Technology & AI",
-    description:
-      "Discover practical technology and AI skills through interactive, mentor-led sessions. Learn technology fundamentals, useful AI tools, prompt writing, automation concepts and practical applications. Work on your own technology or AI-based project while your mentor provides guidance, troubleshooting support and feedback.",
-    image: "/assets/AI-Learning-Workspace.webp",
-    alt: "Technology project illustration",
-    price: "$799",
   },
 ];
 

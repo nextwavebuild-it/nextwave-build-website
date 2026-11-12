@@ -7,6 +7,12 @@ const SLIDE_INTERVAL = 3000;
 
 const slides = [
   {
+    title: "TECHNOLOGY & AI",
+    src: "/assets/AI.webp",
+    alt: "Illustration of technology and AI learning",
+    lines: ["TECHNOLOGY", "& AI"],
+  },
+  {
     title: "E-COMMERCE",
     src: "/assets/ECOMMERCE.webp",
     alt: "Illustration of an online store",
@@ -17,12 +23,6 @@ const slides = [
     src: "/assets/FREELANCER.webp",
     alt: "Illustration of a freelance portfolio",
     lines: ["FREELANCING", "& ONLINE WORK"],
-  },
-  {
-    title: "TECHNOLOGY & AI",
-    src: "/assets/AI.webp",
-    alt: "Illustration of technology and AI learning",
-    lines: ["TECHNOLOGY", "& AI"],
   },
 ];
 
@@ -40,7 +40,7 @@ const getReducedMotion = () =>
 const getServerReducedMotion = () => false;
 
 export default function Hero() {
-  const [current, setCurrent] = useState(2);
+  const [current, setCurrent] = useState(0);
   const [resetCount, setResetCount] = useState(0);
 
   const reducedMotion = useSyncExternalStore(
@@ -109,7 +109,7 @@ export default function Hero() {
               alt={slide.alt}
               width={720}
               height={720}
-              priority={current === 2}
+              priority={current === 0}
               sizes="(max-width: 768px) 92vw, (max-width: 1200px) 50vw, 650px"
               style={{
                 objectFit: "contain",
