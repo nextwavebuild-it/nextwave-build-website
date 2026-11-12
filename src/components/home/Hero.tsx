@@ -117,7 +117,9 @@ export default function Hero() {
             />
           </div>
 
-          <div className="livebadge">YOUR NEXT CHAPTER / 00{current + 1}</div>
+          <div className="livebadge">
+            YOUR NEXT CHAPTER / {String(current + 1).padStart(3, "0")}
+          </div>
 
           <div className="plate">
             <span>FEATURED PATH</span>
