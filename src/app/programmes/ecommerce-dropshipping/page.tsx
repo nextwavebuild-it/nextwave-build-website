@@ -328,7 +328,7 @@ export default function EcommercePage() {
               />
             </div>
 
-            <div className={styles.heroSticker}>YOUR NEXT CHAPTER / 001</div>
+            <div className={styles.heroSticker}>YOUR NEXT CHAPTER</div>
 
             <div className={styles.heroPlate}>
               <span>FEATURED PROGRAMME</span>
