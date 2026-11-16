@@ -1237,3 +1237,36 @@
   width: 100%;
   max-width: 760px;
 }
+
+/* Freelancing Hero Image */
+
+.freelancingHeroImage {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .freelancingHeroImage {
+    max-width: 650px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .freelancingHeroImage {
+    max-width: 100%;
+  }
+
+  .heroArt {
+    height: auto;
+    min-height: 0;
+  }
+}

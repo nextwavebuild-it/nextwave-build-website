@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import FreelancingHeroAnimation from "@/components/FreelancingHeroAnimation";
 
 export const metadata: Metadata = {
   title: "Freelancing & Online Work | NextWave Build",
@@ -305,7 +304,15 @@ export default function FreelancingPage() {
             </div>
           </div>
           <div className={styles.heroArt}>
-            <FreelancingHeroAnimation />
+            <Image
+              src="/assets/Freelancing_Course.webp"
+              alt="Freelancing and Online Work learning programme with live mentor guidance"
+              width={1536}
+              height={1024}
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className={styles.freelancingHeroImage}
+            />
           </div>
         </div>
         <div className={styles.heroBottom}>
