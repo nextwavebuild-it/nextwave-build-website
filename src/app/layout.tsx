@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-
+import WhatsAppWidget from "@/components/shared/WhatsAppWidget";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 
@@ -29,6 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
 
         <Footer />
+        <WhatsAppWidget />
       </body>
     </html>
   );
