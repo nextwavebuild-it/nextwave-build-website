@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
+import AIHeroAnimation from "@/components/AIHeroAnimation";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -308,22 +309,7 @@ export default function TechnologyAIPage() {
           <div className={styles.heroArt}>
             <div className={styles.heroCircle} aria-hidden="true" />
             <div className={styles.heroFrame}>
-              <Image
-                src="/assets/AI-Learning-Workspace.webp"
-                alt="Illustration of a technology and AI learning workspace"
-                fill
-                priority
-                sizes="(max-width: 768px) 90vw, 48vw"
-                className={styles.heroImage}
-              />
-            </div>
-            <div className={styles.heroSticker}>YOUR NEXT CHAPTER</div>
-            <div className={styles.heroPlate}>
-              <span>FEATURED PROGRAMME</span>
-              <strong>
-                TECHNOLOGY
-                <br />& AI
-              </strong>
+              <AIHeroAnimation />
             </div>
           </div>
         </div>
@@ -473,17 +459,20 @@ export default function TechnologyAIPage() {
               <span>YOUR PRACTICAL PROJECT</span>
               <span>003 / BUILD</span>
             </div>
+
             <div className={styles.projectImageWrap}>
               <Image
-                src="/assets/AI-Learning-Workspace.webp"
-                alt="Illustration representing an AI project workspace"
+                src="/assets/AI-Project-Workspace.webp"
+                alt="AI project development workspace with laptop, project progress checklist, and AI assistant"
                 fill
                 sizes="(max-width: 768px) 90vw, 43vw"
                 className={styles.projectImage}
               />
             </div>
+
             <span className={styles.projectBadge}>IDEAS INTO PROJECTS ↗</span>
           </div>
+
           <div className={styles.projectCopy}>
             <Heading
               eyebrow="05 / BUILD SOMETHING REAL"

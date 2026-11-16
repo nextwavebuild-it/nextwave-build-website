@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import styles from "./page.module.css";
+import EcommerceHeroAnimation from "@/components/EcommerceHeroAnimation";
 
 export const metadata: Metadata = {
   title: "E-Commerce & Dropshipping | NextWave Build",
@@ -315,28 +316,7 @@ export default function EcommercePage() {
           </div>
 
           <div className={styles.heroArt}>
-            <div className={styles.heroCircle} aria-hidden="true" />
-
-            <div className={styles.heroFrame}>
-              <Image
-                src="/assets/E-Commerce-Dropshipping.webp"
-                alt="Illustration representing e-commerce and online store development"
-                fill
-                priority
-                sizes="(max-width: 768px) 90vw, 48vw"
-                className={styles.heroImage}
-              />
-            </div>
-
-            <div className={styles.heroSticker}>YOUR NEXT CHAPTER</div>
-
-            <div className={styles.heroPlate}>
-              <span>FEATURED PROGRAMME</span>
-              <strong>
-                E-COMMERCE
-                <br />& DROPSHIPPING
-              </strong>
-            </div>
+            <EcommerceHeroAnimation />
           </div>
         </div>
 
@@ -509,7 +489,7 @@ export default function EcommercePage() {
 
             <div className={styles.projectImageWrap}>
               <Image
-                src="/assets/E-Commerce-Dropshipping.webp"
+                src="/assets/E-Commerce-Course-Laptop-Workspace.webp"
                 alt="E-commerce store project illustration"
                 fill
                 sizes="(max-width: 768px) 90vw, 43vw"

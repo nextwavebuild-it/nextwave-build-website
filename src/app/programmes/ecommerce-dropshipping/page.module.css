@@ -1549,3 +1549,31 @@
     color: #172015;
   }
 }
+
+/* E-COMMERCE HERO — CLEAN ANIMATION */
+
+.heroArt {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transform: none;
+}
+
+.heroArt :global(.nw-ecommerce-animation) {
+  width: 100%;
+  height: auto;
+  max-width: 720px;
+  display: block;
+}
+
+/* Hide old decorative elements */
+.heroCircle,
+.heroFrame,
+.heroSticker,
+.heroPlate {
+  display: none;
+}
