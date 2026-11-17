@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@next/third-parties": "^16.4.6",
     "lucide-react": "^0.464.0",
     "next": "^16.4.6",
     "react": "19.2.4",
