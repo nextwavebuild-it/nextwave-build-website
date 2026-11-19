@@ -2,9 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import WhatsAppWidget from "@/components/shared/WhatsAppWidget";
-import Header from "@/components/shared/Header";
-import Footer from "@/components/shared/Footer";
+import PublicSiteChrome from "@/components/shared/PublicSiteChrome";
 
 import "./globals.css";
 
@@ -26,16 +24,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Header />
+        <PublicSiteChrome>{children}</PublicSiteChrome>
 
-        {children}
-
-        <WhatsAppWidget />
-
-        <Footer />
+        <GoogleAnalytics gaId="G-2DQPE4XF70" />
       </body>
-
-      <GoogleAnalytics gaId="G-2DQPE4XF70" />
     </html>
   );
 }

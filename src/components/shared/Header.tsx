@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LanguageTranslator from "./LanguageTranslator";
 
 const SHRINK_THRESHOLD = 60;
+const MOBILE_BREAKPOINT = 768;
 
 const programmes = [
   {
@@ -32,20 +34,19 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [programmesOpen, setProgrammesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  // Prevent hover from reopening the dropdown
-  // immediately after a programme link is clicked.
   const [hoverSuppressed, setHoverSuppressed] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const isProgrammePage = pathname.startsWith("/programmes/");
+  const isBlogPage = pathname === "/blog" || pathname.startsWith("/blog/");
 
-  /* ==========================================
-     STICKY SHRINKING HEADER
-  ========================================== */
+  function isMobileLayout() {
+    return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
+  }
 
+  // Sticky shrinking header
   useEffect(() => {
     const updateHeader = () => {
       const shouldShrink = window.scrollY > SHRINK_THRESHOLD;
@@ -67,10 +68,7 @@ export default function Header() {
     };
   }, []);
 
-  /* ==========================================
-     CLOSE MENU ON OUTSIDE CLICK / ESCAPE
-  ========================================== */
-
+  // Close navigation on outside click / Escape
   useEffect(() => {
     function handleOutsideClick(event: PointerEvent) {
       if (
@@ -103,35 +101,60 @@ export default function Header() {
     };
   }, []);
 
-  /* ==========================================
-     CLOSE NAVIGATION
-  ========================================== */
-
+  // Close menus after navigating
   function closeMenu() {
     setOpen(false);
     setProgrammesOpen(false);
     setHoverSuppressed(true);
 
-    // Remove focus from clicked links to avoid
-    // the CSS :focus-within keeping the menu open.
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   }
 
-  function handleDropdownLeave() {
-    setProgrammesOpen(false);
-    setHoverSuppressed(false);
+  // Desktop: open on mouse hover
+  function handleDropdownEnter(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== "mouse" || isMobileLayout() || hoverSuppressed) {
+      return;
+    }
+
+    setProgrammesOpen(true);
   }
 
-  /* ==========================================
-     RENDER HEADER
-  ========================================== */
+  // Desktop: close when mouse leaves
+  // Never close from a touch pointer-leave event.
+  function handleDropdownLeave(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== "mouse" || isMobileLayout()) {
+      return;
+    }
+
+    setProgrammesOpen(false);
+    setHoverSuppressed(false);
+
+    const trigger = triggerRef.current;
+
+    if (trigger && document.activeElement === trigger) {
+      trigger.blur();
+    }
+  }
+
+  // Mobile: click/tap to open or close
+  function handleProgrammesClick(event: React.MouseEvent<HTMLButtonElement>) {
+    // On desktop, ordinary mouse clicks are not needed
+    // because the dropdown operates by hover.
+    // Allow keyboard activation on desktop.
+    if (!isMobileLayout() && event.detail !== 0) {
+      return;
+    }
+
+    setProgrammesOpen((previous) => !previous);
+    setHoverSuppressed(false);
+  }
 
   return (
     <header className={`nav${scrolled ? " nav-shrink" : ""}`}>
       <div className="shell navrow">
-        {/* NEXTWAVE LOGO */}
+        {/* LOGO */}
         <Link
           href="/"
           className="brand"
@@ -148,13 +171,13 @@ export default function Header() {
           />
         </Link>
 
-        {/* MAIN NAVIGATION */}
+        {/* NAVIGATION */}
         <nav
           className={`navlinks${open ? " open" : ""}`}
           id="navlinks"
           aria-label="Main navigation"
         >
-          {/* PROGRAMMES DROPDOWN */}
+          {/* PROGRAMS */}
           <div
             ref={dropdownRef}
             className={[
@@ -164,6 +187,7 @@ export default function Header() {
             ]
               .filter(Boolean)
               .join(" ")}
+            onPointerEnter={handleDropdownEnter}
             onPointerLeave={handleDropdownLeave}
           >
             <button
@@ -175,10 +199,7 @@ export default function Header() {
               aria-haspopup="true"
               aria-expanded={programmesOpen}
               aria-controls="programmes-submenu"
-              onClick={() => {
-                setHoverSuppressed(false);
-                setProgrammesOpen((previous) => !previous);
-              }}
+              onClick={handleProgrammesClick}
             >
               <span>Programs</span>
 
@@ -198,7 +219,7 @@ export default function Header() {
               </svg>
             </button>
 
-            {/* DROPDOWN CONTENT */}
+            {/* PROGRAMS SUBMENU */}
             <div id="programmes-submenu" className="programmes-dropdown-menu">
               <div className="programmes-dropdown-label">
                 EXPLORE OUR PROGRAMMES
@@ -228,7 +249,6 @@ export default function Header() {
                 </Link>
               ))}
 
-              {/* VIEW ALL PROGRAMMES */}
               <Link
                 href="/#flagships"
                 className="programmes-view-all"
@@ -240,6 +260,16 @@ export default function Header() {
             </div>
           </div>
 
+          {/* BLOG */}
+          <Link
+            href="/blog"
+            onClick={closeMenu}
+            className={isBlogPage ? "is-active" : undefined}
+            aria-current={isBlogPage ? "page" : undefined}
+          >
+            Blog
+          </Link>
+
           {/* CONTACT */}
           <Link href="/#contact" onClick={closeMenu}>
             Contact
@@ -248,16 +278,13 @@ export default function Header() {
 
         {/* RIGHT SIDE */}
         <div className="navend">
-          {/* SIGN IN / REGISTER */}
           <a className="cta" href="https://portal.nextwavebuild.com/">
             Sign in / Register
             <span aria-hidden="true">↗</span>
           </a>
 
-          {/* LANGUAGE TRANSLATOR */}
           <LanguageTranslator />
 
-          {/* MOBILE MENU */}
           <button
             type="button"
             className="menu"

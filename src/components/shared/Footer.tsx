@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
         <div className="footgrid">
           {/* Brand Section */}
           <div>
-            <a href="#home" className="brand" aria-label="NextWave Build home">
+            <Link href="/" className="brand" aria-label="NextWave Build home">
               <Image
                 priority
                 src="/NextWaveBuild_Horizontal_OnDark_1200px.png"
@@ -15,7 +16,7 @@ export default function Footer() {
                 width={144}
                 height={144}
               />
-            </a>
+            </Link>
 
             <p>
               Don&apos;t just learn it, build it. Practical skills, real
@@ -27,9 +28,11 @@ export default function Footer() {
           <div>
             <h4>Explore</h4>
 
-            <a href="#flagships">Programs</a>
+            <Link href="/#flagships">Programs</Link>
 
-            <a href="#contact">Contact</a>
+            <Link href="/blog">Blog</Link>
+
+            <Link href="/#contact">Contact</Link>
           </div>
 
           {/* Next Steps Section */}
