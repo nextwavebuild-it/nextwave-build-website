@@ -4,16 +4,40 @@ import Image from "next/image";
 import AIHeroAnimation from "@/components/AIHeroAnimation";
 import styles from "./page.module.css";
 
+const PAGE_TITLE = "AI & Technology Course Online | NextWave Build";
+
+const PAGE_DESCRIPTION =
+  "Develop practical AI and technology skills. Learn AI tools, prompt writing, automation and project building with mentor support.";
+
+const PAGE_URL = "https://nextwavebuild.com/programmes/technology-ai";
+
 export const metadata: Metadata = {
-  title: "Technology & AI Programme | NextWave Build",
-  description:
-    "Explore practical technology and AI skills in a 12-week mentor-led programme. Learn useful AI tools, prompt writing, automation fundamentals, and build your own AI project.",
-  alternates: { canonical: "/programmes/technology-ai" },
+  title: PAGE_TITLE,
+
+  description: PAGE_DESCRIPTION,
+
+  alternates: {
+    canonical: PAGE_URL,
+  },
+
   openGraph: {
-    title: "Technology & AI | NextWave Build",
-    description:
-      "Don't just explore AI. Learn practical skills and build a project with live mentor guidance.",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: PAGE_URL,
+    siteName: "NextWave Build",
     type: "website",
+    locale: "en_US",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+  },
+
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -269,7 +293,7 @@ export default function TechnologyAIPage() {
         <div className={`${styles.shell} ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>
-              NEXTWAVE BUILD / PROGRAMME 03
+              AI & Technology Course Online | NextWave Build
             </span>
             <h1>
               DON&apos;T JUST
@@ -281,9 +305,8 @@ export default function TechnologyAIPage() {
               BUILD WITH IT.
             </h1>
             <p>
-              Learn practical technology and AI skills, explore useful tools,
-              create smarter workflows, and bring your ideas to life through 12
-              weeks of live, mentor-led learning.
+              Develop practical AI and technology skills. Learn AI tools, prompt
+              writing, automation and project building with mentor support.
             </p>
             <div className={styles.heroActions}>
               <EnrollButton label="Start Your Journey" />

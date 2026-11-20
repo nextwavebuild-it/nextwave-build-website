@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 
 import { blogPublic, getGlobalBlogPosts } from "@/lib/blog-public";
-
 import BlogPostGrid from "@/components/blog/BlogPostGrid";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,6 @@ function parsePage(value?: string) {
     : 1;
 }
 
-// Correct canonical URL for each pagination page.
 export async function generateMetadata({
   searchParams,
 }: Props): Promise<Metadata> {
@@ -72,45 +71,76 @@ export default async function BlogPage({ searchParams }: Props) {
     <main className="min-h-screen bg-[#101214] text-white">
       {/* BLOG HERO */}
       <section className="relative overflow-hidden border-b border-white/10">
-        <div className="mx-auto max-w-7xl px-6 pb-20 pt-20 lg:pb-28 lg:pt-28">
-          <p className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-[#D5FF66]">
-            NEXTWAVE BUILD / JOURNAL
-          </p>
+        <div className="relative mx-auto max-w-[1440px] px-6 py-12 lg:px-10 lg:py-16 xl:px-16">
+          {/* TWO COLUMN HERO */}
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-8">
+            {/* LEFT CONTENT */}
+            <div className="relative z-10">
+              <p className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-[#D5FF66]">
+                NEXTWAVE BUILD / JOURNAL
+              </p>
 
-          <h1 className="max-w-4xl text-5xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
-            Learn Today.
-            <span className="block text-[#D5FF66]">Build Tomorrow.</span>
-          </h1>
+              <h1 className="text-5xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-[64px] xl:text-7xl">
+                Learn Today.
+                <span className="block text-[#D5FF66]">Build Tomorrow.</span>
+              </h1>
 
-          <p className="mt-7 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
-            Discover educational insights, practical guides and emerging
-            opportunities in technology, artificial intelligence, e-commerce and
-            freelancing.
-          </p>
+              <p className="mt-7 max-w-xl text-base leading-8 text-white/60 sm:text-lg">
+                Discover educational insights, practical guides and emerging
+                opportunities in technology, artificial intelligence, e-commerce
+                and freelancing.
+              </p>
 
-          {/* CLICKABLE CATEGORY LINKS */}
-          <nav
-            aria-label="Blog categories"
-            className="mt-9 flex flex-wrap gap-3"
-          >
-            <Link
-              href="/blog"
-              aria-current="page"
-              className="rounded-full border border-[#D5FF66] bg-[#D5FF66] px-4 py-2 text-xs font-semibold !text-[#101214]"
-            >
-              All Articles
-            </Link>
-
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/blog/category/${category.slug}`}
-                className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70 transition-colors hover:border-[#D5FF66] hover:text-[#D5FF66]"
+              {/* CATEGORY LINKS */}
+              <nav
+                aria-label="Blog categories"
+                className="mt-9 flex flex-wrap gap-3"
               >
-                {category.name}
-              </Link>
-            ))}
-          </nav>
+                <Link
+                  href="/blog"
+                  aria-current="page"
+                  className="rounded-full border border-[#D5FF66] bg-[#D5FF66] px-4 py-2 text-xs font-semibold !text-[#101214]"
+                >
+                  All Articles
+                </Link>
+
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    href={`/blog/category/${category.slug}`}
+                    className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70 transition-colors hover:border-[#D5FF66] hover:text-[#D5FF66]"
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* RIGHT HERO IMAGE */}
+            <div className="relative flex min-w-0 items-center justify-center overflow-hidden lg:min-h-[500px]">
+              {/* BACKGROUND GLOW */}
+              {/* <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full bg-[#D5FF66]/10 blur-[100px]"
+              /> */}
+
+              {/* HERO IMAGE */}
+              <Image
+                src="/assets/blogheroimglaptop.webp"
+                alt="NextWave Build digital education, AI, e-commerce and freelancing"
+                width={1408}
+                height={1056}
+                priority
+                sizes="(max-width: 1023px) 100vw, 650px"
+                className="relative z-10 block !h-auto !w-full !max-w-none object-contain"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxWidth: "none",
+                }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -143,7 +173,7 @@ export default async function BlogPage({ searchParams }: Props) {
 
         {/* SUPPORTING INTERNAL LINK */}
         <div className="mt-16 flex items-center gap-3 border-t border-white/10 pt-8 text-sm text-white/50">
-          <BookOpen size={18} className="text-[#D5FF66]" />
+          <BookOpen size={18} className="shrink-0 text-[#D5FF66]" />
 
           <p>
             Explore our practical guides and{" "}

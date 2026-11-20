@@ -7,26 +7,23 @@ const STEP_INTERVAL = 2000;
 const steps = [
   {
     number: "01.",
-    title: "Learn the Foundations",
-    description:
-      "Short, clear lessons cover the core ideas and tools you need.",
+    title: "LEARN THE FOUNDATIONS",
+    description: "Build digital skills through clear, structured lessons.",
   },
   {
     number: "02.",
-    title: "Practise the Skills",
-    description:
-      "Guided exercises help you try each skill until it feels natural.",
+    title: "PRACTISE THE SKILLS",
+    description: "Gain hands-on experience through guided exercises.",
   },
   {
     number: "03.",
-    title: "Build YOUR Project",
-    description:
-      "Bring it together in a real project you plan, create, and can share.",
+    title: "BUILD YOUR PROJECT",
+    description: "Create practical projects that showcase your abilities.",
   },
   {
     number: "04.",
-    title: "Get Mentor Feedback",
-    description: "A mentor reviews your work and suggests clear next steps.",
+    title: "GET MENTOR FEEDBACK",
+    description: "Improve your work with mentor guidance and feedback.",
   },
 ];
 
@@ -82,11 +79,8 @@ export default function Method() {
           <div>
             <span className="eyebrow">The Learning Experience</span>
 
-            <h2>
-              From Lesson
-              <br />
-              To Launch.
-            </h2>
+            {/* SEO-optimized H2 heading */}
+            <h2>Learn Through Real-World Projects</h2>
           </div>
         </div>
 
@@ -98,10 +92,13 @@ export default function Method() {
               }`}
               key={step.number}
             >
+              {/* Card number - SPAN */}
               <span className="num">{step.number}</span>
 
+              {/* Card title - H3 */}
               <h3>{step.title}</h3>
 
+              {/* Card description - P */}
               <p>{step.description}</p>
             </div>
           ))}

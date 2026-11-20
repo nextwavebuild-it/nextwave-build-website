@@ -4,15 +4,34 @@ import Image from "next/image";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Freelancing & Online Work | NextWave Build",
+  title: "Online Freelancing Course | NextWave Build",
+
   description:
-    "Build practical freelancing skills in 12 weeks. Develop a portfolio, practise proposals and client communication, and learn with live NextWave Build mentors.",
-  alternates: { canonical: "/programmes/freelancing-online-work" },
+    "Learn freelancing, client communication, portfolio building and proposal writing through practical online training with mentor guidance at NextWave Build.",
+
+  alternates: {
+    canonical: "https://nextwavebuild.com/programmes/freelancing-online-work",
+  },
+
   openGraph: {
-    title: "Freelancing & Online Work | NextWave Build",
+    title: "Online Freelancing Course | NextWave Build",
     description:
-      "Learn the skills. Build your portfolio. Practise real client-style work with mentor guidance.",
+      "Learn freelancing, client communication, portfolio building and proposal writing through practical online training with mentor guidance at NextWave Build.",
+    url: "https://nextwavebuild.com/programmes/freelancing-online-work",
+    siteName: "NextWave Build",
     type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Online Freelancing Course | NextWave Build",
+    description:
+      "Learn freelancing, client communication, portfolio building and proposal writing through practical online training with mentor guidance at NextWave Build.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -157,19 +176,19 @@ const mentorBenefits = [
     number: "01",
     title: "Live Guidance",
     description:
-      "Learn through mentor-led sessions that explain skills, workflows, and useful tools.",
+      "Learn freelancing skills through live mentor-led sessions covering client communication, practical workflows and useful tools.",
   },
   {
     number: "02",
     title: "Practical Assignments",
     description:
-      "Work on client-style briefs, proposals, and portfolio projects with support.",
+      "Work on realistic freelance client briefs, project proposals and portfolio assignments with structured mentor support.",
   },
   {
     number: "03",
     title: "Personal Feedback",
     description:
-      "Understand how to improve your work, presentation, and communication.",
+      "Receive constructive mentor feedback to improve your freelance projects, portfolio presentation and client communication.",
   },
 ];
 
@@ -184,39 +203,44 @@ const audience = [
 
 const faqs = [
   {
-    question: "Do I need freelancing experience?",
+    question: "Do I need previous freelancing experience to join?",
     answer:
-      "No. The programme starts with the fundamentals and progresses through practical assignments, portfolio building, and communication skills.",
+      "No previous freelancing experience is needed if you are starting as a beginner. The programme introduces essential freelance skills, including choosing services, creating sample work, developing a portfolio and learning how to communicate with potential clients.",
   },
   {
-    question: "How long is the programme?",
+    question: "How long is the Freelancing & Online Work programme?",
     answer:
-      "The Freelancing & Online Work programme is structured over 12 weeks, with practical learning and mentor guidance.",
+      "The programme is designed around 12 weeks of practical learning. During this period, you explore freelancing fundamentals, complete guided assignments, build portfolio projects and receive mentor feedback.",
   },
   {
-    question: "Will I create my own portfolio?",
+    question: "Will I build my own freelance portfolio?",
     answer:
-      "Yes. You will work on sample projects and develop a portfolio that demonstrates the skills you practise during the programme.",
+      "The programme includes portfolio-building activities where you create sample projects, present your work professionally and practise showcasing your skills to potential freelance clients.",
   },
   {
-    question: "Will I learn how to write proposals?",
+    question: "Will I learn how to write freelance proposals?",
     answer:
-      "Yes. The learning roadmap includes interpreting project briefs, writing proposals, and practising client communication.",
+      "YYes. You will practise preparing clear, tailored proposals based on sample client briefs. The learning activities cover understanding client needs, presenting your services and communicating your approach professionally.",
   },
   {
-    question: "Are the sessions live?",
+    question: "Are the freelancing classes live or pre-recorded?",
     answer:
-      "The programme is designed around live mentor-led learning, practice activities, and project feedback.",
+      "The programme includes live, mentor-led learning sessions and guided practical assignments. Confirm the current class schedule and any recorded lesson access with NextWave Build before enrolling.",
   },
   {
     question: "Will I be guaranteed freelance clients or income?",
     answer:
-      "No. The programme teaches practical skills; finding clients and earning income depend on your skills, effort, market conditions, and other factors.",
+      "No. The programme focuses on developing practical freelance skills, building a portfolio and preparing for client work. Getting clients or earning income depends on your abilities, effort, market demand and other factors, so specific results are not guaranteed.",
   },
   {
-    question: "How do I enroll?",
+    question: "How can I enroll in the freelancing course?",
     answer:
-      "Select Enroll Now to open the NextWave Build registration application with the Freelancing programme selected, if supported by the registration form.",
+      "Use the Start Registration button on the programme page to begin the enrollment process. Review the available course details, fees and schedule before completing your registration.",
+  },
+  {
+    question: "How much does the Freelancing & Online Work programme cost?",
+    answer:
+      "The Freelancing & Online Work programme at NextWave Build costs $499 USD. This programme is designed to help you develop practical freelancing skills through structured online learning, hands-on projects, and mentor guidance.",
   },
 ];
 
@@ -265,7 +289,7 @@ export default function FreelancingPage() {
         <div className={`${styles.shell} ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>
-              NEXTWAVE BUILD / PROGRAMME 02
+              Freelancing Course Online | Build Skills with NextWave
             </span>
             <h1>
               DON&apos;T JUST
@@ -277,10 +301,8 @@ export default function FreelancingPage() {
               FUTURE.
             </h1>
             <p>
-              Learn how to turn your abilities into professional services. Build
-              a portfolio, practise client-style assignments, and develop
-              practical freelancing skills through 12 weeks of mentor-led
-              learning.
+              Learn freelancing, client communication, portfolio building and
+              proposal writing through practical mentor-led online training.
             </p>
             <div className={styles.heroActions}>
               <EnrollButton label="Start Your Journey" />
@@ -334,19 +356,19 @@ export default function FreelancingPage() {
             PROJECTS.
           </Heading>
           <div className={styles.introContent}>
-            <p className={styles.introLead}>
-              Freelancing is more than creating a profile. It&apos;s about
-              delivering value through your work.
+            <h3 className={styles.introLead}>
+              Learn Practical Freelancing Skills and Build Your Portfolio
+            </h3>
+            <p>
+              Our online freelancing course helps beginners develop practical
+              skills for working with clients. Learn how to explore freelance
+              services, build a professional portfolio, communicate with clients
+              and prepare effective project proposals.
             </p>
             <p>
-              Our programme helps you explore online services, build sample
-              work, create your portfolio, and understand the communication
-              skills involved in working with clients.
-            </p>
-            <p>
-              Instead of just watching lessons, you&apos;ll practise on
-              assignments, complete a project, and refine your work with mentor
-              feedback.
+              Through hands-on assignments, real-world projects and mentor
+              feedback, you&apos;ll practise your skills, create sample work and
+              build confidence in offering your services online.
             </p>
             <a href="#skills" className={styles.darkLink}>
               DISCOVER WHAT YOU&apos;LL LEARN ↗
@@ -359,7 +381,7 @@ export default function FreelancingPage() {
         <div className={styles.shell}>
           <Heading
             eyebrow="02 / PRACTICAL LEARNING"
-            description="Explore the skills needed to present your work, communicate professionally, and manage freelance projects."
+            description="Discover the practical freelancing skills you'll develop in this course, from choosing a freelance niche and building a professional portfolio to writing client proposals, communicating effectively and managing freelance projects. Each learning area helps you prepare for real-world freelance work."
           >
             WHAT YOU&apos;LL
             <br />
@@ -471,13 +493,14 @@ export default function FreelancingPage() {
               />
             </div>
             <span className={styles.projectBadge}>
-              BUILD WORK YOU CAN SHOW ↗
+              Freelancing course practical project showing online portfolio and
+              sample client work
             </span>
           </div>
           <div className={styles.projectCopy}>
             <Heading
               eyebrow="05 / BUILD SOMETHING REAL"
-              description="You won't just hear about freelancing. You'll practise the process and create work that demonstrates your skills."
+              description="create sample work for potential clients and build a professional portfolio. With mentor guidance, you'll practise preparing client proposals and improving your work through feedback."
             >
               YOUR SKILLS.
               <br />
@@ -509,10 +532,6 @@ export default function FreelancingPage() {
               <br />
               LEARNING ALONE.
             </Heading>
-            <div className={styles.mentorHighlight}>
-              <strong>REAL GUIDANCE.</strong>
-              <span>REAL PROJECTS.</span>
-            </div>
           </div>
           <div className={styles.mentorGrid}>
             {mentorBenefits.map((item) => (
@@ -530,7 +549,7 @@ export default function FreelancingPage() {
         <div className={`${styles.shell} ${styles.audienceGrid}`}>
           <Heading
             eyebrow="07 / WHO SHOULD JOIN?"
-            description="A beginner-friendly learning path for people who want to explore professional online work."
+            description="Our beginner-friendly online freelancing course is designed for students, graduates, aspiring freelancers, career changers and professionals who want to develop practical digital skills. Whether you're starting from scratch or exploring remote work opportunities, you'll learn how to build a portfolio, communicate with clients and prepare for freelance projects."
           >
             BUILT FOR
             <br />
@@ -559,8 +578,11 @@ export default function FreelancingPage() {
               QUESTIONS?
             </Heading>
             <p>
-              Find answers about the programme, practical projects, and
-              registration.
+              Find answers to frequently asked questions about NextWave Build’s
+              **Freelancing & Online Work programme**. Explore course fees,
+              beginner-friendly online training, practical freelancing skills,
+              real-world projects, mentor guidance, and how the programme helps
+              you prepare for online work opportunities.
             </p>
             <EnrollButton label="Start Registration" outline />
           </div>

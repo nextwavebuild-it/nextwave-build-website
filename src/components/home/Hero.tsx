@@ -86,9 +86,9 @@ export default function Hero() {
           </h1>
 
           <p>
-            Go beyond watching lessons. Learn practical skills, practise them,
-            and bring your ideas to life through real projects—with guidance
-            along the way.
+            Learn practical skills in AI, freelancing and e-commerce with
+            mentor-led online courses. Build real projects and develop skills
+            for the digital economy.
           </p>
         </div>
 

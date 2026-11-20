@@ -812,7 +812,7 @@ section {
   margin-top: 20px;
 }
 
-.manifesto-points b {
+.manifesto-points h3 {
   display: block;
 
   font-size: 13px;
@@ -820,7 +820,7 @@ section {
   margin-bottom: 6px;
 }
 
-.manifesto-points small {
+.manifesto-points p {
   color: #8f9d9e;
 
   line-height: 1.65;

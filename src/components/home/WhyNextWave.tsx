@@ -22,6 +22,7 @@ export default function WhyNextWave() {
       <div className="manifesto-copy reveal">
         <span className="eyebrow">Built differently</span>
 
+        {/* Main section heading - H2 */}
         <h2>
           Knowledge
           <br />
@@ -32,33 +33,59 @@ export default function WhyNextWave() {
           the point.
         </h2>
 
+        {/* SEO-optimized introduction */}
         <p>
-          NextWave Build is designed around one idea: skills grow when you use
-          them. Every program moves you from understanding something to actually
-          making it.
+          NextWave Build helps you develop practical digital skills through
+          hands-on learning, real-world projects and mentor guidance. Explore
+          technology and AI, e-commerce and dropshipping, and freelancing
+          through structured online training designed to turn knowledge into
+          practical abilities.
         </p>
 
+        {/* Feature cards */}
         <div className="manifesto-points">
+          {/* Feature Card 01 */}
           <div>
-            <b>↗ Practical learning</b>
-            <small>Apply what you learn, not theory for its own sake.</small>
+            <h3>
+              <span>01</span> ↗ PRACTICAL LEARNING
+            </h3>
+            <p>
+              Apply new digital skills through structured lessons, guided
+              exercises and hands-on training.
+            </p>
           </div>
 
+          {/* Feature Card 02 */}
           <div>
-            <b>↗ Real projects</b>
-            <small>Create work of your own that you can share.</small>
+            <h3>
+              <span>02</span> ↗ REAL PROJECTS
+            </h3>
+            <p>
+              Build practical projects in AI, e-commerce and freelancing to
+              demonstrate what you learn.
+            </p>
           </div>
 
+          {/* Feature Card 03 */}
           <div>
-            <b>↗ Mentor support</b>
-            <small>Helpful questions, honest feedback, clear next steps.</small>
+            <h3>
+              <span>03</span> ↗ MENTOR SUPPORT
+            </h3>
+            <p>
+              Get mentor guidance, constructive feedback and clear direction
+              throughout your learning journey.
+            </p>
           </div>
 
+          {/* Feature Card 04 */}
           <div>
-            <b>↗ A welcoming path</b>
-            <small>
-              New to the field or building on experience? Start here.
-            </small>
+            <h3>
+              <span>04</span> ↗ A WELCOMING PATH
+            </h3>
+            <p>
+              Start learning new digital skills with beginner-friendly
+              programmes and structured guidance.
+            </p>
           </div>
         </div>
       </div>

@@ -3,18 +3,40 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import EcommerceHeroAnimation from "@/components/EcommerceHeroAnimation";
 
+const PAGE_TITLE = "E-Commerce & Dropshipping Course | NextWave Build";
+
+const PAGE_DESCRIPTION =
+  "Learn e-commerce and dropshipping through practical online training. Explore product research, store setup, suppliers and online business management.";
+
+const PAGE_URL = "https://nextwavebuild.com/programmes/ecommerce-dropshipping";
+
 export const metadata: Metadata = {
-  title: "E-Commerce & Dropshipping | NextWave Build",
-  description:
-    "Learn E-Commerce & Dropshipping in 12 weeks with live mentor-led training. Research products, build an online store, learn marketing and complete your own practical project.",
+  title: PAGE_TITLE,
+
+  description: PAGE_DESCRIPTION,
+
   alternates: {
-    canonical: "/programmes/ecommerce-dropshipping",
+    canonical: PAGE_URL,
   },
+
   openGraph: {
-    title: "E-Commerce & Dropshipping | NextWave Build",
-    description:
-      "Don't just learn e-commerce. Build your own online store with mentor support.",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: PAGE_URL,
+    siteName: "NextWave Build",
     type: "website",
+    locale: "en_US",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+  },
+
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -270,7 +292,7 @@ export default function EcommercePage() {
         <div className={`${styles.shell} ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>
-              NEXTWAVE BUILD / PROGRAMME 01
+              E-Commerce & Dropshipping Course | NextWave Build
             </span>
 
             <h1>
@@ -284,9 +306,9 @@ export default function EcommercePage() {
             </h1>
 
             <p>
-              Learn how to research products, build an online store, understand
-              digital marketing, and manage an e-commerce project through 12
-              weeks of practical, mentor-led learning.
+              Learn e-commerce and dropshipping through practical online
+              training. Explore product research, store setup, suppliers and
+              online business management.
             </p>
 
             <div className={styles.heroActions}>

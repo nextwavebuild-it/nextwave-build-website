@@ -18,10 +18,13 @@ type StoredContent = {
 };
 
 function safeUrl(value: unknown): string | null {
-  if (typeof value !== "string") return null;
+  if (typeof value !== "string") {
+    return null;
+  }
 
   try {
     const url = new URL(value);
+
     return ["http:", "https:"].includes(url.protocol) ? url.href : null;
   } catch {
     return null;
@@ -39,8 +42,15 @@ function renderNode(node: Node, key: number): ReactNode {
 
     case "heading": {
       const level = Number(node.attrs?.level);
-      if (level === 2) return <h2 key={key}>{children}</h2>;
-      if (level === 3) return <h3 key={key}>{children}</h3>;
+
+      if (level === 2) {
+        return <h2 key={key}>{children}</h2>;
+      }
+
+      if (level === 3) {
+        return <h3 key={key}>{children}</h3>;
+      }
+
       return null;
     }
 
@@ -72,6 +82,34 @@ function renderNode(node: Node, key: number): ReactNode {
         </pre>
       );
 
+    // EMBEDDED ARTICLE IMAGE
+    case "image": {
+      const src = safeUrl(node.attrs?.src);
+
+      if (!src || !src.startsWith("https://")) {
+        return null;
+      }
+
+      const alt = typeof node.attrs?.alt === "string" ? node.attrs.alt : "";
+
+      const title =
+        typeof node.attrs?.title === "string" ? node.attrs.title : undefined;
+
+      return (
+        <figure key={key} className="my-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={alt}
+            title={title}
+            loading="lazy"
+            decoding="async"
+            className="h-auto w-full rounded-2xl object-contain"
+          />
+        </figure>
+      );
+    }
+
     case "text": {
       let result: ReactNode = node.text ?? "";
 
@@ -80,15 +118,19 @@ function renderNode(node: Node, key: number): ReactNode {
           case "bold":
             result = <strong key={index}>{result}</strong>;
             break;
+
           case "italic":
             result = <em key={index}>{result}</em>;
             break;
+
           case "strike":
             result = <s key={index}>{result}</s>;
             break;
+
           case "code":
             result = <code key={index}>{result}</code>;
             break;
+
           case "link": {
             const href = safeUrl(mark.attrs?.href);
 
@@ -104,6 +146,7 @@ function renderNode(node: Node, key: number): ReactNode {
                 </a>
               );
             }
+
             break;
           }
         }
