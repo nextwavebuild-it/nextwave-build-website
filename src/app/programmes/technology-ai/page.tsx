@@ -60,13 +60,13 @@ const outcomes = [
     number: "03",
     title: "Prompt Writing",
     description:
-      "Practise writing clear instructions, refining outputs, and evaluating AI-generated responses.",
+      "Learn AI prompt writing techniques to create clear instructions and improve AI-generated response.",
   },
   {
     number: "04",
     title: "Automation Concepts",
     description:
-      "Learn how repetitive tasks can be organized into simple workflows using appropriate tools.",
+      "Explore AI workflow automation and learn how to organize repetitive tasks using suitable tools.",
   },
   {
     number: "05",
@@ -78,7 +78,7 @@ const outcomes = [
     number: "06",
     title: "Build an AI Project",
     description:
-      "Plan, develop, test, and present a practical technology or AI-powered project with mentor feedback.",
+      "Plan, develop and present a practical AI project through hands-on learning and mentor feedback.",
   },
 ];
 
@@ -355,18 +355,20 @@ export default function TechnologyAIPage() {
             TO CREATION.
           </Heading>
           <div className={styles.introContent}>
-            <p className={styles.introLead}>
+            <h3 className={styles.introLead}>
               Technology and AI become more useful when you know how to apply
               them.
+            </h3>
+            <p>
+              Our online AI and Technology course introduces practical
+              technology fundamentals, AI tools, prompt writing, workflow
+              automation and responsible AI use through beginner-friendly
+              learning activities.
             </p>
             <p>
-              NextWave Build introduces practical technology fundamentals,
-              helpful AI tools, clear prompt writing, workflow design, and
-              responsible use through activities you can try yourself.
-            </p>
-            <p>
-              Rather than only watching lessons, you will work toward a
-              practical project with live mentor guidance and constructive
+              With live mentor guidance, you&apos;ll apply what you learn
+              through hands-on exercises, develop practical AI skills and work
+              towards creating your own AI-based project with constructive
               feedback.
             </p>
             <a href="#outcomes" className={styles.darkLink}>
@@ -380,7 +382,7 @@ export default function TechnologyAIPage() {
         <div className={styles.shell}>
           <Heading
             eyebrow="02 / PRACTICAL LEARNING"
-            description="Develop useful technology skills and learn how to apply AI thoughtfully to real tasks and projects."
+            description="Discover the practical skills you'll develop in our AI and Technology course, from understanding digital tools and writing effective AI prompts to exploring workflow automation and solving real-world problems. Apply your learning through hands-on activities and build a practical AI project with mentor guidance."
           >
             WHAT YOU&apos;LL
             <br />
