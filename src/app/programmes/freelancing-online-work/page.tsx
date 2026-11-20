@@ -43,37 +43,37 @@ const skills = [
     number: "01",
     title: "Discover Your Skills",
     description:
-      "Explore digital services, identify your strengths, and understand how freelancers create value for clients.",
+      "Explore different freelance services, identify your strengths and learn how to turn your digital skills into valuable services for potential clients. ",
   },
   {
     number: "02",
     title: "Find Your Niche",
     description:
-      "Learn about target clients, market research, service positioning, and defining what you can offer.",
+      "Learn how to research freelance markets, identify potential clients and choose a suitable freelance niche based on your skills and interests. ",
   },
   {
     number: "03",
     title: "Build a Portfolio",
     description:
-      "Create sample projects and present your work in a clear, professional portfolio.",
+      "Create practical sample projects and build a professional freelance portfolio that showcases your skills and work to potential clients. ",
   },
   {
     number: "04",
     title: "Profiles & Proposals",
     description:
-      "Understand freelancing platforms and practise writing clear, tailored project proposals.",
+      "Learn how to create a professional freelancer profile, explore freelancing platforms and write tailored freelance proposals that address client requirements.",
   },
   {
     number: "05",
     title: "Client Communication",
     description:
-      "Practise project discovery, timelines, feedback, professional communication, and expectations.",
+      "Develop professional client communication skills by understanding project requirements, discussing timelines, managing expectations and responding to client feedback.",
   },
   {
     number: "06",
     title: "Manage Your Work",
     description:
-      "Explore project planning, delivery, revisions, pricing principles, and building repeatable workflows.",
+      "Learn freelance project management skills, including project planning, meeting deadlines, handling revisions, understanding pricing and delivering work to clients. ",
   },
 ];
 
