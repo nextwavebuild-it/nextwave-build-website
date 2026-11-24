@@ -5,6 +5,7 @@ import { createBlogPost } from "@/lib/blog-admin/actions";
 
 import RichTextEditor from "@/components/blog-admin/RichTextEditor";
 import FeaturedImageUploader from "@/components/blog-admin/FeaturedImageUploader";
+import PublishingDestinationSelector from "@/components/blog-admin/PublishingDestinationSelector";
 
 const input =
   "mt-2 w-full rounded-lg border border-white/15 bg-[#1c2022] px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#D5FF66] focus:ring-1 focus:ring-[#D5FF66]/30";
@@ -16,18 +17,25 @@ type Props = {
 export default async function NewBlogPost({ searchParams }: Props) {
   const { supabase } = await requireBlogAdmin();
 
-  const [categories, pages] = await Promise.all([
+  const [categories, pages, countries] = await Promise.all([
     supabase.from("blog_categories").select("id,name").order("name"),
 
     supabase
       .from("blog_pages")
-      .select("id,name,slug,page_type,status")
+      .select("id,name,slug,page_type,status,country_id")
+      .order("name"),
+
+    supabase
+      .from("blog_countries")
+      .select("id,name,country_code,is_active")
       .order("name"),
   ]);
 
   const query = await searchParams;
 
-  const loadingError = Boolean(categories.error || pages.error);
+  const loadingError = Boolean(
+    categories.error || pages.error || countries.error,
+  );
 
   return (
     <main className="max-w-6xl space-y-7">
@@ -228,47 +236,13 @@ export default async function NewBlogPost({ searchParams }: Props) {
             </label>
 
             {/* PUBLISHING DESTINATIONS */}
-            <div>
-              <p className="mb-3 text-sm font-medium text-white/80">
-                Publish Locations *
-                <span className="ml-1 text-xs font-normal text-white/45">
-                  (select multiple)
-                </span>
-              </p>
-
-              <div className="space-y-3">
-                {pages.data?.map((page) => (
-                  <label
-                    key={page.id}
-                    className="flex cursor-pointer items-start gap-3 rounded-lg border border-white/10 bg-[#1c2022] p-3 text-sm transition-colors hover:border-[#D5FF66]/40 has-[:checked]:border-[#D5FF66]/60 has-[:checked]:bg-[#D5FF66]/5"
-                  >
-                    <input
-                      type="checkbox"
-                      name="page_ids"
-                      value={page.id}
-                      defaultChecked={page.page_type === "GLOBAL"}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#D5FF66]"
-                    />
-
-                    <span className="min-w-0">
-                      <span className="block font-medium text-white">
-                        {page.name}
-                      </span>
-
-                      <small className="mt-1 block text-xs text-white/45">
-                        {page.page_type} · {page.status}
-                      </small>
-                    </span>
-                  </label>
-                ))}
-              </div>
-
-              {!pages.data?.length && (
-                <p className="mt-3 text-xs text-white/50">
-                  No publishing destinations available.
-                </p>
-              )}
-            </div>
+            <PublishingDestinationSelector
+              pages={pages.data ?? []}
+              countries={countries.data ?? []}
+              initialSelectedIds={(pages.data ?? [])
+                .filter((page) => page.page_type === "GLOBAL")
+                .map((page) => page.id)}
+            />
 
             {/* ADD DESTINATION */}
             <Link

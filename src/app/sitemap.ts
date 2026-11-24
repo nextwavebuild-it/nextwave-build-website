@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { blogPublic } from "@/lib/blog-public";
+import { getCountryBodyText } from "@/lib/country-page-content";
 
 const BASE_URL = "https://nextwavebuild.com";
 
@@ -10,12 +11,13 @@ export const revalidate = 3600;
 
 const BATCH_SIZE = 500;
 const CATEGORY_BATCH_SIZE = 100;
+const DESTINATION_BATCH_SIZE = 100;
 
-// Country landing pages intentionally excluded
-// from the sitemap, including /uae.
-// Publishing a country page does not automatically
-// make it appear in sitemap.xml.
-const INCLUDE_COUNTRY_PAGES_IN_SITEMAP = false;
+// Automatic sitemap inclusion configuration.
+const INCLUDE_COUNTRY_PAGES_IN_SITEMAP = true;
+const INCLUDE_CITY_PAGES_IN_SITEMAP = true;
+
+const VALID_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ==========================================
@@ -58,56 +60,182 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // ==========================================
-  // 3. COLLECT PUBLISHED BLOG ARTICLES
+  // 3. COLLECT PUBLISHED COUNTRY AND CITY PAGES
   // ==========================================
 
-  const articlePages: MetadataRoute.Sitemap = [];
+  const countryPages: MetadataRoute.Sitemap = [];
+  const cityPages: MetadataRoute.Sitemap = [];
 
-  const publishedCategoryIds = new Set<string>();
+  const eligibleDestinationIds = new Set<string>([globalPage.id]);
 
-  const now = new Date().toISOString();
+  const enabledDestinationTypes: string[] = [];
 
-  for (let offset = 0; ; offset += BATCH_SIZE) {
-    const { data: posts, error } = await blogPublic
-      .from("blog_posts")
-      .select("id,slug,updated_at,category_id,blog_post_pages!inner(page_id)")
-      .eq("status", "PUBLISHED")
-      .lte("published_at", now)
-      .eq("blog_post_pages.page_id", globalPage.id)
-      .order("id", { ascending: true })
-      .range(offset, offset + BATCH_SIZE - 1);
+  if (INCLUDE_COUNTRY_PAGES_IN_SITEMAP) {
+    enabledDestinationTypes.push("COUNTRY");
+  }
 
-    if (error) {
-      throw new Error(`Cannot generate blog sitemap: ${error.message}`);
-    }
+  if (INCLUDE_CITY_PAGES_IN_SITEMAP) {
+    enabledDestinationTypes.push("CITY");
+  }
 
-    if (!posts?.length) {
-      break;
-    }
+  if (enabledDestinationTypes.length > 0) {
+    for (let offset = 0; ; offset += BATCH_SIZE) {
+      const { data: destinations, error } = await blogPublic
+        .from("blog_pages")
+        .select(
+          "id,slug,page_type,heading,description,seo_title,seo_description,content,updated_at,blog_countries!inner(is_active)",
+        )
+        .in("page_type", enabledDestinationTypes)
+        .eq("status", "PUBLISHED")
+        .eq("blog_countries.is_active", true)
+        .order("id", { ascending: true })
+        .range(offset, offset + BATCH_SIZE - 1);
 
-    for (const post of posts) {
-      articlePages.push({
-        url: `${BASE_URL}/blog/${post.slug}`,
-
-        ...(post.updated_at
-          ? {
-              lastModified: new Date(post.updated_at),
-            }
-          : {}),
-      });
-
-      if (post.category_id) {
-        publishedCategoryIds.add(post.category_id);
+      if (error) {
+        throw new Error(
+          `Cannot generate destination sitemap: ${error.message}`,
+        );
       }
-    }
 
-    if (posts.length < BATCH_SIZE) {
-      break;
+      if (!destinations?.length) {
+        break;
+      }
+
+      for (const destination of destinations) {
+        // Exclude invalid URL slugs.
+        if (!VALID_SLUG.test(destination.slug)) {
+          continue;
+        }
+
+        // Validate landing-page content and SEO metadata.
+        // These checks match the existing CMS publishing requirements.
+        const validContent =
+          (destination.heading?.trim().length ?? 0) >= 10 &&
+          (destination.description?.trim().length ?? 0) >= 100 &&
+          (destination.seo_title?.trim().length ?? 0) >= 10 &&
+          (destination.seo_description?.trim().length ?? 0) >= 50 &&
+          getCountryBodyText(destination.content).length >= 300;
+
+        if (!validContent) {
+          continue;
+        }
+
+        const entry: MetadataRoute.Sitemap[number] = {
+          url: `${BASE_URL}/${destination.slug}`,
+
+          ...(destination.updated_at
+            ? {
+                lastModified: new Date(destination.updated_at),
+              }
+            : {}),
+        };
+
+        // Include published country landing pages.
+        if (
+          destination.page_type === "COUNTRY" &&
+          INCLUDE_COUNTRY_PAGES_IN_SITEMAP
+        ) {
+          countryPages.push(entry);
+          eligibleDestinationIds.add(destination.id);
+        }
+
+        // Include published city landing pages.
+        if (destination.page_type === "CITY" && INCLUDE_CITY_PAGES_IN_SITEMAP) {
+          cityPages.push(entry);
+          eligibleDestinationIds.add(destination.id);
+        }
+      }
+
+      if (destinations.length < BATCH_SIZE) {
+        break;
+      }
     }
   }
 
   // ==========================================
-  // 4. COLLECT PUBLISHED BLOG CATEGORIES
+  // 4. COLLECT PUBLISHED BLOG ARTICLES
+  // ==========================================
+
+  // Use a Map to prevent duplicate article URLs when
+  // an article belongs to multiple destinations.
+  const articlePages = new Map<string, MetadataRoute.Sitemap[number]>();
+
+  // Categories must remain based on Global Blog articles.
+  const publishedCategoryIds = new Set<string>();
+
+  const destinationIds = Array.from(eligibleDestinationIds);
+
+  const now = new Date().toISOString();
+
+  // Process destination IDs in batches to avoid
+  // excessively large Supabase query URLs.
+  for (
+    let destinationOffset = 0;
+    destinationOffset < destinationIds.length;
+    destinationOffset += DESTINATION_BATCH_SIZE
+  ) {
+    const ids = destinationIds.slice(
+      destinationOffset,
+      destinationOffset + DESTINATION_BATCH_SIZE,
+    );
+
+    for (let offset = 0; ; offset += BATCH_SIZE) {
+      const { data: posts, error } = await blogPublic
+        .from("blog_posts")
+        .select("id,slug,updated_at,category_id,blog_post_pages!inner(page_id)")
+        .eq("status", "PUBLISHED")
+        .lte("published_at", now)
+        .in("blog_post_pages.page_id", ids)
+        .order("id", { ascending: true })
+        .range(offset, offset + BATCH_SIZE - 1);
+
+      if (error) {
+        throw new Error(`Cannot generate blog sitemap: ${error.message}`);
+      }
+
+      if (!posts?.length) {
+        break;
+      }
+
+      for (const post of posts) {
+        // Exclude invalid article slugs.
+        if (!VALID_SLUG.test(post.slug)) {
+          continue;
+        }
+
+        // All articles retain one canonical URL,
+        // regardless of their publishing destinations.
+        const articleUrl = `${BASE_URL}/blog/${post.slug}`;
+
+        articlePages.set(articleUrl, {
+          url: articleUrl,
+
+          ...(post.updated_at
+            ? {
+                lastModified: new Date(post.updated_at),
+              }
+            : {}),
+        });
+
+        // Preserve existing Global Blog category behaviour.
+        const belongsToGlobalBlog =
+          post.blog_post_pages?.some(
+            (placement) => placement.page_id === globalPage.id,
+          ) ?? false;
+
+        if (belongsToGlobalBlog && post.category_id) {
+          publishedCategoryIds.add(post.category_id);
+        }
+      }
+
+      if (posts.length < BATCH_SIZE) {
+        break;
+      }
+    }
+  }
+
+  // ==========================================
+  // 5. COLLECT PUBLISHED BLOG CATEGORIES
   // ==========================================
 
   const categoryPages: MetadataRoute.Sitemap = [];
@@ -132,7 +260,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     for (const category of categories ?? []) {
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(category.slug)) {
+      if (!VALID_SLUG.test(category.slug)) {
         continue;
       }
 
@@ -142,27 +270,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  // ==========================================
+  // 6. SORT SITEMAP ENTRIES
+  // ==========================================
+
   categoryPages.sort((a, b) => a.url.localeCompare(b.url));
 
-  // ==========================================
-  // 5. COUNTRY LANDING PAGES
-  // ==========================================
+  countryPages.sort((a, b) => a.url.localeCompare(b.url));
 
-  const countryPages: MetadataRoute.Sitemap = [];
+  cityPages.sort((a, b) => a.url.localeCompare(b.url));
 
-  // Country sitemap inclusion is deliberately disabled.
-  // UAE and all other country landing pages can be
-  // published independently without being added here.
-  //
-  // When we decide to enable country sitemap entries,
-  // we'll add a verified published-country query.
-  if (INCLUDE_COUNTRY_PAGES_IN_SITEMAP) {
-    // Intentionally reserved for future implementation.
-  }
+  const sortedArticlePages = Array.from(articlePages.values()).sort((a, b) =>
+    a.url.localeCompare(b.url),
+  );
 
   // ==========================================
-  // 6. RETURN COMPLETE SITEMAP
+  // 7. RETURN COMPLETE SITEMAP
   // ==========================================
 
-  return [...staticPages, ...categoryPages, ...articlePages, ...countryPages];
+  const allPages = [
+    ...staticPages,
+    ...categoryPages,
+    ...sortedArticlePages,
+    ...countryPages,
+    ...cityPages,
+  ];
+
+  // Final protection against duplicate URLs.
+  return Array.from(new Map(allPages.map((page) => [page.url, page])).values());
 }
