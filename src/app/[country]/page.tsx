@@ -23,34 +23,55 @@ const SITE_URL = "https://nextwavebuild.com";
 type Props = { params: Promise<{ country: string }> };
 
 async function getCountryPage(slug: string) {
-  // Validate public URL input and never expose unpublished country pages.
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
+  // Validate public URL input.
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    return null;
+  }
+
+  // Retrieve published COUNTRY or CITY destinations.
   const { data: page, error } = await blogPublic
     .from("blog_pages")
     .select(
-      "id,name,slug,heading,description,seo_title,seo_description,country_id,content",
+      "id,name,slug,page_type,heading,description,seo_title,seo_description,country_id,content",
     )
-    .eq("page_type", "COUNTRY")
+    .in("page_type", ["COUNTRY", "CITY"])
     .eq("slug", slug)
     .eq("status", "PUBLISHED")
     .maybeSingle();
-  if (error) throw new Error(`Cannot load country page: ${error.message}`);
-  if (!page?.country_id) return null;
+
+  if (error) {
+    throw new Error(`Cannot load destination page: ${error.message}`);
+  }
+
+  if (!page?.country_id) {
+    return null;
+  }
+
+  // Verify that the associated country is active.
   const { data: activeCountry, error: countryError } = await blogPublic
     .from("blog_countries")
     .select("id")
     .eq("id", page.country_id)
     .eq("is_active", true)
     .maybeSingle();
-  if (countryError)
-    throw new Error(`Cannot verify country: ${countryError.message}`);
+
+  if (countryError) {
+    throw new Error(`Cannot verify parent country: ${countryError.message}`);
+  }
+  // Never expose destinations with inactive countries
+  // or incomplete landing page content.
+  // Keep validation aligned with publishing, sitemap and RLS rules.
   if (
     !activeCountry ||
-    !page.heading?.trim() ||
-    !page.description?.trim() ||
+    (page.heading?.trim().length ?? 0) < 10 ||
+    (page.description?.trim().length ?? 0) < 100 ||
+    (page.seo_title?.trim().length ?? 0) < 10 ||
+    (page.seo_description?.trim().length ?? 0) < 50 ||
     getCountryBodyText(page.content).length < 300
-  )
+  ) {
     return null;
+  }
+
   return page;
 }
 
@@ -127,6 +148,10 @@ export default async function CountryLandingPage({ params }: Props) {
   const { country } = await params;
   const page = await getCountryPage(country);
   if (!page) notFound();
+
+  const isCity = page.page_type === "CITY";
+  const destinationLabel = isCity ? "City" : "Country";
+
   const content = parseCountryPageContent(page.content);
   const parsed = splitCountryBody(content.text);
   const articles = await getCountryArticles(page.id);
@@ -229,7 +254,7 @@ export default async function CountryLandingPage({ params }: Props) {
           <div className="mx-auto max-w-7xl px-6">
             <div className="border-t border-black/15 pt-12">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#626A5D]">
-                02 / COUNTRY INSIGHTS
+                02 / {destinationLabel.toUpperCase()} INSIGHTS
               </p>
               <h2 className="mt-5 max-w-4xl text-[clamp(2.5rem,5vw,4.8rem)] font-black uppercase leading-[0.98] tracking-[-0.05em]">
                 {content.insightsTitle}
@@ -362,8 +387,6 @@ export default async function CountryLandingPage({ params }: Props) {
                     href={`/blog/${post.slug}`}
                     className="flex h-full flex-col"
                   >
-                    {/* Featured image */}
-
                     {/* Featured image */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#202526]">
                       {post.featured_image ? (

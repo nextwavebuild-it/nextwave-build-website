@@ -2,15 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink, Pencil } from "lucide-react";
 
 import { requireBlogAdmin } from "@/lib/blog-admin/guard";
-import { createPublishingPage } from "@/lib/blog-admin/actions";
-
-// NextWave Build brand colors
-// Primary: #D5FF66
-// Hover: #C5EF53
-// Background: #101214
-
-const input =
-  "mt-2 w-full rounded-lg border border-white/15 bg-[#1c2022] px-4 py-3 text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#D5FF66] focus:ring-1 focus:ring-[#D5FF66]/30";
+import CreateDestinationForm from "@/components/blog-admin/CreateDestinationForm";
 
 export default async function PublishingPages({
   searchParams,
@@ -22,12 +14,31 @@ export default async function PublishingPages({
 }) {
   const { supabase } = await requireBlogAdmin();
 
-  const { data: pages, error } = await supabase
-    .from("blog_pages")
-    .select("id,name,slug,page_type,status")
-    .order("created_at");
+  // Fetch destinations and countries concurrently.
+  const [pagesResult, countriesResult] = await Promise.all([
+    supabase
+      .from("blog_pages")
+      .select("id,name,slug,page_type,status,country_id")
+      .order("created_at"),
+
+    supabase
+      .from("blog_countries")
+      .select("id,name,country_code,is_active")
+      .order("name"),
+  ]);
+
+  const pages = pagesResult.data ?? [];
+  const countries = countriesResult.data ?? [];
+
+  const activeCountries = countries.filter((country) => country.is_active);
+
+  const countriesById = new Map(
+    countries.map((country) => [country.id, country]),
+  );
 
   const query = await searchParams;
+
+  const loadingError = Boolean(pagesResult.error || countriesResult.error);
 
   return (
     <main className="max-w-5xl space-y-7">
@@ -42,12 +53,12 @@ export default async function PublishingPages({
         </h1>
 
         <p className="mt-3 text-sm leading-7 text-white/60">
-          Create and manage country-specific SEO landing pages. Edit their
-          content, prepare drafts, and manage publishing.
+          Create and manage country-specific and city-specific SEO landing
+          pages. Edit their content, prepare drafts, and manage publishing.
         </p>
       </div>
 
-      {/* NOTIFICATIONS */}
+      {/* ERROR NOTIFICATION */}
       {query.error && (
         <div
           role="alert"
@@ -57,12 +68,24 @@ export default async function PublishingPages({
         </div>
       )}
 
+      {/* SUCCESS NOTIFICATION */}
       {query.success && (
         <div
           role="status"
           className="rounded-xl border border-[#D5FF66]/30 bg-[#D5FF66]/10 px-5 py-4 text-sm text-[#D5FF66]"
         >
           {query.success}
+        </div>
+      )}
+
+      {/* COUNTRY LOADING ERROR */}
+      {countriesResult.error && (
+        <div
+          role="alert"
+          className="rounded-xl border border-red-500/40 bg-red-500/10 px-5 py-4 text-sm text-red-200"
+        >
+          Could not load country records. Destination creation has been
+          disabled.
         </div>
       )}
 
@@ -76,14 +99,14 @@ export default async function PublishingPages({
           </p>
         </div>
 
-        {error ? (
+        {pagesResult.error ? (
           <p
             role="alert"
             className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300"
           >
-            Could not load publishing destinations: {error.message}
+            Could not load publishing destinations.
           </p>
-        ) : !pages?.length ? (
+        ) : !pages.length ? (
           <div className="rounded-lg border border-dashed border-white/10 p-8 text-center">
             <p className="text-sm text-white/50">
               No publishing destinations available.
@@ -92,16 +115,22 @@ export default async function PublishingPages({
         ) : (
           <div className="divide-y divide-white/10">
             {pages.map((page) => {
+              const isCountry = page.page_type === "COUNTRY";
+
+              const isCity = page.page_type === "CITY";
+
               const pageUrl =
                 page.page_type === "GLOBAL"
                   ? "/blog"
-                  : page.page_type === "COUNTRY"
+                  : isCountry || isCity
                     ? `/${page.slug}`
                     : `/pages/${page.slug}`;
 
               const isPublished = page.status === "PUBLISHED";
 
-              const isCountry = page.page_type === "COUNTRY";
+              const country = page.country_id
+                ? countriesById.get(page.country_id)
+                : undefined;
 
               return (
                 <div
@@ -119,6 +148,32 @@ export default async function PublishingPages({
                     <p className="mt-2 text-xs uppercase tracking-wider text-white/35">
                       {page.page_type}
                     </p>
+
+                    {/* COUNTRY INFORMATION */}
+                    {isCountry && country && (
+                      <p className="mt-2 text-xs text-white/45">
+                        Country code:{" "}
+                        <span className="font-medium text-[#D5FF66]">
+                          {country.country_code}
+                        </span>
+                      </p>
+                    )}
+
+                    {/* CITY PARENT INFORMATION */}
+                    {isCity && country && (
+                      <p className="mt-2 text-xs text-white/45">
+                        Parent country:{" "}
+                        <span className="font-medium text-[#D5FF66]">
+                          {country.name} ({country.country_code})
+                        </span>
+                      </p>
+                    )}
+
+                    {(isCountry || isCity) && country && !country.is_active && (
+                      <p className="mt-2 text-xs text-amber-300">
+                        Parent country is inactive.
+                      </p>
+                    )}
                   </div>
 
                   {/* STATUS AND ACTIONS */}
@@ -133,7 +188,8 @@ export default async function PublishingPages({
                       {page.status}
                     </span>
 
-                    {isCountry && (
+                    {/* COUNTRY EDITOR */}
+                    {(isCountry || isCity) && (
                       <Link
                         href={`/blog-admin/pages/${page.id}/edit`}
                         className="inline-flex items-center gap-2 rounded-lg border border-[#D5FF66]/35 bg-[#D5FF66]/10 px-4 py-2 text-sm font-semibold text-[#D5FF66] transition-colors hover:border-[#D5FF66] hover:bg-[#D5FF66]/15"
@@ -144,6 +200,7 @@ export default async function PublishingPages({
                       </Link>
                     )}
 
+                    {/* VIEW PUBLISHED PAGE */}
                     {isPublished && (
                       <Link
                         href={pageUrl}
@@ -163,113 +220,11 @@ export default async function PublishingPages({
         )}
       </section>
 
-      {/* ADD NEW DESTINATION */}
-      <form
-        action={createPublishingPage}
-        className="space-y-5 rounded-xl border border-white/10 bg-[#15191A] p-6"
-      >
-        <div>
-          <h2 className="text-xl font-semibold text-white">
-            Add New Destination
-          </h2>
-
-          <p className="mt-2 text-sm text-white/45">
-            Create a new country-specific or custom publishing destination.
-          </p>
-        </div>
-
-        {/* PAGE NAME */}
-        <label className="block text-sm font-medium text-white/85">
-          Page name *
-          <input
-            name="name"
-            required
-            maxLength={120}
-            className={input}
-            placeholder="United Arab Emirates"
-          />
-        </label>
-
-        {/* URL SLUG */}
-        <label className="block text-sm font-medium text-white/85">
-          URL slug (optional)
-          <input name="slug" className={input} placeholder="uae" />
-        </label>
-
-        {/* PAGE TYPE */}
-        <label className="block text-sm font-medium text-white/85">
-          Page type *
-          <select name="page_type" className={input} required>
-            <option value="COUNTRY">Country</option>
-            <option value="CUSTOM">Custom</option>
-          </select>
-        </label>
-
-        {/* COUNTRY CODE */}
-        <label className="block text-sm font-medium text-white/85">
-          2-letter country code (required for country pages)
-          <input
-            name="country_code"
-            className={input}
-            placeholder="AE"
-            maxLength={2}
-            autoCapitalize="characters"
-          />
-        </label>
-
-        {/* PAGE HEADING */}
-        <label className="block text-sm font-medium text-white/85">
-          Page heading
-          <input
-            name="heading"
-            className={input}
-            placeholder="Explore Digital Skills in the UAE"
-          />
-        </label>
-
-        {/* PAGE INTRODUCTION */}
-        <label className="block text-sm font-medium text-white/85">
-          Page introduction
-          <textarea
-            name="description"
-            className={input}
-            rows={4}
-            placeholder="Introduce educational opportunities, skills, and insights relevant to this destination."
-          />
-        </label>
-
-        {/* SEO TITLE */}
-        <label className="block text-sm font-medium text-white/85">
-          SEO title
-          <input
-            name="seo_title"
-            className={input}
-            maxLength={180}
-            placeholder="Digital Skills & Education in UAE | NextWave Build"
-          />
-        </label>
-
-        {/* SEO DESCRIPTION */}
-        <label className="block text-sm font-medium text-white/85">
-          SEO description
-          <textarea
-            name="seo_description"
-            className={input}
-            maxLength={300}
-            rows={3}
-            placeholder="Write a compelling description for search engines."
-          />
-        </label>
-
-        {/* SUBMIT */}
-        <button
-          type="submit"
-          disabled={Boolean(error)}
-          className="inline-flex items-center justify-center rounded-xl bg-[#D5FF66] px-6 py-3 text-sm font-semibold !text-[#101214] transition-colors hover:bg-[#C5EF53] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D5FF66] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Create Draft Destination
-        </button>
-      </form>
+      {/* CREATE DESTINATION FORM */}
+      <CreateDestinationForm
+        countries={activeCountries}
+        disabled={loadingError}
+      />
     </main>
   );
 }

@@ -29,7 +29,7 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
       "id,name,slug,page_type,status,heading,description,seo_title,seo_description,content",
     )
     .eq("id", id)
-    .eq("page_type", "COUNTRY")
+    .in("page_type", ["COUNTRY", "CITY"])
     .maybeSingle();
   if (error) throw new Error(`Could not load country page: ${error.message}`);
   if (!page) notFound();
@@ -37,6 +37,9 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
   const content = parseCountryPageContent(page.content);
   const body = splitCountryBody(content.text);
   const published = page.status === "PUBLISHED";
+
+  const isCity = page.page_type === "CITY";
+  const destinationLabel = isCity ? "City" : "Country";
 
   return (
     <main className="max-w-5xl space-y-7 text-white">
@@ -48,7 +51,7 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
           ← Publishing Destinations
         </Link>
         <p className="mt-7 text-xs font-semibold tracking-[0.2em] text-[#D5FF66]">
-          COUNTRY SEO CONTENT MANAGEMENT
+          {destinationLabel.toUpperCase()} SEO CONTENT MANAGEMENT
         </p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">
           Edit {page.name}
@@ -57,8 +60,9 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
           Public URL: /{page.slug} · Status: {page.status}
         </p>
         <p className="mt-2 text-xs leading-6 text-white/45">
-          Changes to this page appear on its public URL after saving. Design
-          stays in Next.js; country-specific content is managed here.
+          Published content appears on its public URL after saving. Design stays
+          in Next.js; {destinationLabel.toLowerCase()}-specific content is
+          managed here.
         </p>
       </header>
 
@@ -129,7 +133,7 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
 
         <section className={section}>
           <h2 className="text-xl font-semibold">
-            2. Country-specific educational content
+            2. {destinationLabel}-specific educational content
           </h2>
           <label className="block text-sm font-medium">
             Insights section heading (H2)
@@ -142,16 +146,14 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
             />
           </label>
           <label className="block text-sm font-medium">
-            Original country body content
+            Original {destinationLabel.toLowerCase()} body content
             <textarea
               name="country_content"
               rows={18}
               maxLength={15000}
               defaultValue={content.text}
               className={input}
-              placeholder={
-                "Intro paragraph...\n\n## Technology & AI in the UAE\n\nCountry-specific explanation..."
-              }
+              placeholder={`Intro paragraph...\n\n## Technology & AI in ${page.name}\n\n${destinationLabel}-specific explanation...`}
             />
             <span className="mt-2 block text-xs font-normal leading-6 text-white/45">
               Minimum 300 characters to publish. Separate blocks with blank
@@ -270,8 +272,9 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
               https://nextwavebuild.com/{page.slug}
             </strong>
             <p className="mt-1 text-xs">
-              Country URLs remain excluded from sitemap.xml as requested.
-              Sitemap exclusion does not prevent Google indexing.
+              Published {destinationLabel.toLowerCase()} pages that meet all
+              public eligibility requirements are automatically included in
+              sitemap.xml.
             </p>
           </div>
         </section>
@@ -280,16 +283,16 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
           type="submit"
           className="rounded-lg bg-[#D5FF66] px-7 py-3 text-sm font-semibold text-[#101214] hover:bg-[#C5EF53]"
         >
-          Save Country SEO Content
+          Save {destinationLabel} SEO Content
         </button>
       </form>
 
       <section className={section}>
         <h2 className="text-xl font-semibold">Publishing</h2>
         <p className="text-sm leading-7 text-white/55">
-          Save first, then publish. All publicly accessible country pages
-          require complete fields and at least 300 characters of original
-          content.
+          Save first, then publish. All publicly accessible{" "}
+          {destinationLabel.toLowerCase()} pages require complete fields and at
+          least 300 characters of original content.
         </p>
         {published ? (
           <div className="flex flex-wrap gap-3">
@@ -318,9 +321,9 @@ export default async function EditCountryPage({ params, searchParams }: Props) {
             <input type="hidden" name="status" value="PUBLISHED" />
             <button
               type="submit"
-              className="rounded-lg bg-[#D5FF66] px-6 py-3 text-sm font-semibold text-[#101214] hover:bg-[#C5EF53]"
+              className="rounded-lg bg-[#D5FF66] px-6 py-3 text-sm font-semibold text-[#101214] hover:bg-[#C5EF53] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Publish Country Page
+              Publish {destinationLabel} Page
             </button>
           </form>
         )}

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { JSONContent } from "@tiptap/react";
+
 import RichTextEditor from "@/components/blog-admin/RichTextEditor";
 import { requireBlogAdmin } from "@/lib/blog-admin/guard";
 import { updateBlogPost } from "@/lib/blog-admin/actions";
 import FeaturedImageUploader from "@/components/blog-admin/FeaturedImageUploader";
+import PublishingDestinationSelector from "@/components/blog-admin/PublishingDestinationSelector";
 
 const input =
   "mt-2 w-full rounded-lg border border-white/15 bg-[#1c2022] px-4 py-3 text-white outline-none placeholder:text-white/30 transition-colors focus:border-[#D5FF66] focus:ring-1 focus:ring-[#D5FF66]/30";
@@ -26,18 +28,26 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
 
   const { supabase } = await requireBlogAdmin();
 
-  const [postResult, categories, pages, assignments] = await Promise.all([
-    supabase.from("blog_posts").select("*").eq("id", id).single(),
+  // Retrieve article, categories, destinations,
+  // existing assignments and countries concurrently.
+  const [postResult, categories, pages, assignments, countries] =
+    await Promise.all([
+      supabase.from("blog_posts").select("*").eq("id", id).single(),
 
-    supabase.from("blog_categories").select("id,name").order("name"),
+      supabase.from("blog_categories").select("id,name").order("name"),
 
-    supabase
-      .from("blog_pages")
-      .select("id,name,page_type,status")
-      .order("name"),
+      supabase
+        .from("blog_pages")
+        .select("id,name,slug,page_type,status,country_id")
+        .order("name"),
 
-    supabase.from("blog_post_pages").select("page_id").eq("post_id", id),
-  ]);
+      supabase.from("blog_post_pages").select("page_id").eq("post_id", id),
+
+      supabase
+        .from("blog_countries")
+        .select("id,name,country_code,is_active")
+        .order("name"),
+    ]);
 
   const post = postResult.data;
 
@@ -45,9 +55,8 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
     notFound();
   }
 
-  const selectedPages = new Set(
-    assignments.data?.map((item) => item.page_id) ?? [],
-  );
+  // Preserve existing publishing destinations.
+  const selectedPageIds = assignments.data?.map((item) => item.page_id) ?? [];
 
   // Support existing plain-text and new Tiptap articles.
   const content = post.content as ArticleContent;
@@ -56,15 +65,27 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
     content?.format === "plain_text_v1" ||
     (content?.format === "tiptap_v1" && content.doc?.type === "doc");
 
+  // Prevent accidental loss of existing assignments
+  // if a destination is missing from the loaded records.
+  const availablePageIds = new Set((pages.data ?? []).map((page) => page.id));
+
+  const missingAssignments = selectedPageIds.some(
+    (pageId) => !availablePageIds.has(pageId),
+  );
+
+  // Prevent saving if required information failed to load.
   const loadingError =
+    Boolean(postResult.error) ||
     Boolean(categories.error) ||
     Boolean(pages.error) ||
     Boolean(assignments.error) ||
+    Boolean(countries.error) ||
+    missingAssignments ||
     !supportedContent;
 
   return (
     <main className="max-w-6xl space-y-7">
-      {/* Page heading */}
+      {/* PAGE HEADING */}
       <div>
         <Link
           href="/blog-admin/posts"
@@ -84,7 +105,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
         </p>
       </div>
 
-      {/* Error message */}
+      {/* ERROR MESSAGE */}
       {query.error && (
         <p
           role="alert"
@@ -94,7 +115,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
         </p>
       )}
 
-      {/* Loading or content format error */}
+      {/* LOADING OR CONTENT FORMAT ERROR */}
       {loadingError && (
         <p
           role="alert"
@@ -106,7 +127,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
         </p>
       )}
 
-      {/* Article form */}
+      {/* ARTICLE FORM */}
       <form
         action={updateBlogPost}
         className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]"
@@ -114,13 +135,13 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
         <input type="hidden" name="id" value={post.id} />
 
         <div className="space-y-5">
-          {/* Article content section */}
+          {/* ARTICLE CONTENT SECTION */}
           <section className="space-y-5 rounded-xl border border-white/10 bg-[#15191A] p-6">
             <h2 className="text-xl font-semibold text-white">
               Article Content
             </h2>
 
-            {/* Article Title */}
+            {/* ARTICLE TITLE */}
             <label className="block text-sm text-white/80">
               Article Title *
               <input
@@ -133,7 +154,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               />
             </label>
 
-            {/* Slug */}
+            {/* SLUG */}
             <label className="block text-sm text-white/80">
               URL Slug *
               <input
@@ -144,7 +165,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               />
             </label>
 
-            {/* Summary */}
+            {/* SUMMARY */}
             <label className="block text-sm text-white/80">
               Summary
               <textarea
@@ -156,7 +177,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               />
             </label>
 
-            {/* New Tiptap Rich-Text Editor */}
+            {/* TIPTAP RICH-TEXT EDITOR */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-white/80">
                 Article Body *
@@ -171,7 +192,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
             </div>
           </section>
 
-          {/* SEO Metadata section */}
+          {/* SEO METADATA SECTION */}
           <section className="space-y-5 rounded-xl border border-white/10 bg-[#15191A] p-6">
             <div>
               <h2 className="text-xl font-semibold text-white">SEO Metadata</h2>
@@ -181,6 +202,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               </p>
             </div>
 
+            {/* SEO TITLE */}
             <label className="block text-sm text-white/80">
               SEO Title
               <input
@@ -191,6 +213,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               />
             </label>
 
+            {/* META DESCRIPTION */}
             <label className="block text-sm text-white/80">
               Meta Description
               <textarea
@@ -202,6 +225,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               />
             </label>
 
+            {/* FEATURED IMAGE */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-white/80">
                 Featured Image
@@ -210,6 +234,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               <FeaturedImageUploader initialUrl={post.featured_image} />
             </div>
 
+            {/* FEATURED IMAGE ALT TEXT */}
             <label className="block text-sm text-white/80">
               Featured Image Alt Text
               <input
@@ -222,14 +247,14 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
           </section>
         </div>
 
-        {/* Publishing settings sidebar */}
+        {/* PUBLISHING SETTINGS SIDEBAR */}
         <aside>
           <section className="space-y-5 rounded-xl border border-white/10 bg-[#15191A] p-6">
             <h2 className="text-lg font-semibold text-white">
               Publishing Settings
             </h2>
 
-            {/* Category */}
+            {/* CATEGORY */}
             <label className="block text-sm text-white/80">
               Category
               <select
@@ -247,7 +272,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               </select>
             </label>
 
-            {/* Status */}
+            {/* PUBLISHING STATUS */}
             <label className="block text-sm text-white/80">
               Publishing Status
               <select
@@ -261,40 +286,15 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               </select>
             </label>
 
-            {/* Publishing destinations */}
-            <div>
-              <p className="mb-3 text-sm font-medium text-white/80">
-                Publishing Destinations *
-              </p>
+            {/* GROUPED PUBLISHING DESTINATIONS */}
+            <PublishingDestinationSelector
+              key={post.id}
+              pages={pages.data ?? []}
+              countries={countries.data ?? []}
+              initialSelectedIds={selectedPageIds}
+            />
 
-              <div className="space-y-3">
-                {pages.data?.map((page) => (
-                  <label
-                    key={page.id}
-                    className="flex cursor-pointer items-start gap-3 rounded-lg border border-white/10 bg-[#1c2022] p-3 text-sm transition-colors hover:border-[#D5FF66]/40 has-[:checked]:border-[#D5FF66]/60 has-[:checked]:bg-[#D5FF66]/5"
-                  >
-                    <input
-                      type="checkbox"
-                      name="page_ids"
-                      value={page.id}
-                      defaultChecked={selectedPages.has(page.id)}
-                      className="mt-0.5 h-4 w-4 accent-[#D5FF66]"
-                    />
-
-                    <span className="min-w-0">
-                      <span className="block font-medium text-white">
-                        {page.name}
-                      </span>
-
-                      <small className="mt-1 block text-xs text-white/45">
-                        {page.page_type} · {page.status}
-                      </small>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
+            {/* MANAGE DESTINATIONS */}
             <Link
               href="/blog-admin/pages"
               className="block text-sm font-medium text-[#D5FF66] transition-colors hover:text-[#C5EF53]"
@@ -302,7 +302,7 @@ export default async function EditBlogPost({ params, searchParams }: Props) {
               + Manage Publishing Destinations
             </Link>
 
-            {/* Save Changes */}
+            {/* SAVE CHANGES */}
             <button
               type="submit"
               disabled={loadingError}

@@ -15,6 +15,27 @@ import { createBlogServerClient } from "@/lib/blog-supabase/server";
 
 import { requireBlogAdmin } from "@/lib/blog-admin/guard";
 
+// Reserved root-level website routes and public namespaces.
+const RESERVED_DESTINATION_SLUGS = new Set([
+  "global",
+  "blog",
+  "blog-admin",
+  "programmes",
+  "leads",
+  "assets",
+  "documents",
+  "pages",
+  "api",
+  "admin",
+  "_next",
+  "favicon.ico",
+  "robots.txt",
+  "sitemap.xml",
+  "logo.png",
+  "logo-color.png",
+  "nextwavebuild_horizontal_ondark_1200px.png",
+]);
+
 function field(form: FormData, name: string) {
   return String(form.get(name) ?? "").trim();
 }
@@ -35,6 +56,52 @@ function slugify(value: string) {
 
 function fail(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
+}
+
+async function revalidatePublishingDestinations(
+  supabase: Awaited<ReturnType<typeof requireBlogAdmin>>["supabase"],
+  pageIds: string[],
+) {
+  const uniqueIds = [...new Set(pageIds)];
+
+  if (!uniqueIds.length) return;
+
+  const { data: pages, error } = await supabase
+    .from("blog_pages")
+    .select("id,slug,page_type")
+    .in("id", uniqueIds);
+
+  if (error) {
+    console.error(
+      "Could not load destinations for revalidation:",
+      error.message,
+    );
+
+    // Fallback: invalidate all country and city landing pages.
+    revalidatePath("/[country]", "page");
+    revalidatePath("/blog");
+    return;
+  }
+
+  const paths = new Set<string>();
+
+  for (const page of pages ?? []) {
+    if (page.page_type === "GLOBAL") {
+      paths.add("/blog");
+      continue;
+    }
+
+    if (
+      ["COUNTRY", "CITY"].includes(page.page_type) &&
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page.slug)
+    ) {
+      paths.add(`/${page.slug}`);
+    }
+  }
+
+  for (const publicPath of paths) {
+    revalidatePath(publicPath);
+  }
 }
 
 export async function blogLogin(form: FormData) {
@@ -246,8 +313,15 @@ export async function createBlogPost(form: FormData) {
   revalidatePath("/blog-admin/dashboard");
   revalidatePath("/blog-admin/posts");
   revalidatePath("/blog-admin/posts/new");
+
+  // Revalidate all selected publishing destinations.
+  await revalidatePublishingDestinations(supabase, pageIds);
+
+  // Revalidate global blog and article URL.
   revalidatePath("/blog");
+  revalidatePath("/blog/category/[slug]", "page");
   revalidatePath(`/blog/${slug}`);
+  revalidatePath("/sitemap.xml");
 
   redirect("/blog-admin/dashboard?success=Article%20saved");
 }
@@ -258,114 +332,165 @@ export async function createPublishingPage(form: FormData) {
   const path = "/blog-admin/pages";
 
   const name = field(form, "name");
-
   const slug = slugify(field(form, "slug") || name);
-
   const type = field(form, "page_type");
 
   const countryCode = field(form, "country_code").toUpperCase();
+  const parentCountryId = field(form, "country_id");
 
   const heading = field(form, "heading");
-
   const description = field(form, "description");
-
   const seoTitle = field(form, "seo_title");
-
   const seoDescription = field(form, "seo_description");
 
+  // 1. Validate destination name and slug.
   if (
     name.length < 2 ||
     name.length > 120 ||
     !slug ||
-    slug === "global" ||
-    slug.length > 100
-  )
+    slug.length > 100 ||
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
+  ) {
     fail(path, "Enter a valid page name and slug");
+  }
 
-  if (!["COUNTRY", "CUSTOM"].includes(type)) fail(path, "Invalid page type");
+  if (RESERVED_DESTINATION_SLUGS.has(slug)) {
+    fail(
+      path,
+      `The URL slug "${slug}" is reserved. Please choose another slug.`,
+    );
+  }
 
-  if (type === "COUNTRY" && !/^[A-Z]{2}$/.test(countryCode))
-    fail(path, "Use a 2-letter ISO country code (AE, SA, QA...) ");
+  // 2. Validate destination type.
+  if (!["COUNTRY", "CITY", "CUSTOM"].includes(type)) {
+    fail(path, "Invalid page type");
+  }
 
+  if (type === "COUNTRY" && !/^[A-Z]{2}$/.test(countryCode)) {
+    fail(path, "Use a 2-letter ISO country code (AE, SA, QA...)");
+  }
+
+  if (type === "CITY" && !validUUID(parentCountryId)) {
+    fail(path, "Select a valid parent country");
+  }
+
+  // 3. Validate content and SEO fields.
   if (
     heading.length > 180 ||
     seoTitle.length > 180 ||
     seoDescription.length > 300 ||
     description.length > 5000
-  )
+  ) {
     fail(path, "One or more page fields are too long");
+  }
+
+  // 4. Check for duplicate destination slugs.
+  const { data: existingPage, error: slugError } = await supabase
+    .from("blog_pages")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (slugError) {
+    fail(path, "Could not verify destination URL");
+  }
+
+  if (existingPage) {
+    fail(path, "A destination with this URL slug already exists");
+  }
 
   let countryId: string | null = null;
-
   let createdCountryId: string | null = null;
 
+  // 5. COUNTRY destination.
   if (type === "COUNTRY") {
     const existing = await supabase
-
       .from("blog_countries")
-
       .select("id")
-
       .eq("country_code", countryCode)
-
       .maybeSingle();
 
-    if (existing.error) fail(path, "Could not check country");
+    if (existing.error) {
+      fail(path, "Could not check country");
+    }
 
-    if (existing.data) countryId = existing.data.id;
-    else {
+    if (existing.data) {
+      countryId = existing.data.id;
+    } else {
       const newCountry = await supabase
-
         .from("blog_countries")
-
-        .insert({ name, slug, country_code: countryCode, is_active: true })
-
+        .insert({
+          name,
+          slug,
+          country_code: countryCode,
+          is_active: true,
+        })
         .select("id")
-
         .single();
 
-      if (newCountry.error || !newCountry.data)
-        fail(path, "Could not create country; check for an existing slug");
+      if (newCountry.error || !newCountry.data) {
+        fail(
+          path,
+          "Could not create country; check for an existing slug or country code",
+        );
+      }
 
       countryId = createdCountryId = newCountry.data.id;
     }
   }
 
+  // 6. CITY destination.
+  if (type === "CITY") {
+    const { data: parentCountry, error: countryError } = await supabase
+      .from("blog_countries")
+      .select("id,name,country_code,is_active")
+      .eq("id", parentCountryId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (countryError) {
+      fail(path, "Could not verify the selected parent country");
+    }
+
+    if (!parentCountry) {
+      fail(path, "The selected parent country does not exist or is inactive");
+    }
+
+    // Reuse the existing country record.
+    countryId = parentCountry.id;
+  }
+
+  // 7. CUSTOM destinations retain a NULL country ID.
+
+  // 8. Create the destination as a draft.
   const { error } = await supabase.from("blog_pages").insert({
     name,
-
     slug,
-
     page_type: type,
-
     country_id: countryId,
-
     heading: heading || name,
-
     description: description || null,
-
     seo_title: seoTitle || null,
-
     seo_description: seoDescription || null,
-
-    status: "DRAFT", // New destination is not public until implemented/reviewed.
+    status: "DRAFT",
   });
 
   if (error) {
-    if (createdCountryId)
+    if (createdCountryId) {
       await supabase.from("blog_countries").delete().eq("id", createdCountryId);
+    }
 
     fail(
       path,
-
       error.code === "23505"
         ? "A destination with that slug or country already exists"
-        : "Could not create page",
+        : "Could not create publishing destination",
     );
   }
 
+  // 9. Revalidate admin pages.
   revalidatePath("/blog-admin/pages");
-
+  revalidatePath("/blog-admin/dashboard");
   revalidatePath("/blog-admin/posts/new");
 
   redirect("/blog-admin/pages?success=Destination%20created%20as%20draft");
@@ -612,14 +737,21 @@ export async function updateBlogPost(form: FormData) {
   }
 
   revalidatePath("/blog-admin/dashboard");
-
   revalidatePath("/blog-admin/posts");
-
   revalidatePath("/blog-admin/posts/new");
+  revalidatePath(`/blog-admin/posts/${id}/edit`);
 
+  // Include both previous and newly selected destinations.
+  const affectedPageIds = [...new Set([...currentIds, ...pageIds])];
+
+  await revalidatePublishingDestinations(supabase, affectedPageIds);
+
+  // Refresh global blog, category pages and article URLs.
   revalidatePath("/blog");
+  revalidatePath("/blog/category/[slug]", "page");
   revalidatePath(`/blog/${existing.slug}`);
   revalidatePath(`/blog/${slug}`);
+  revalidatePath("/sitemap.xml");
 
   redirect(
     `/blog-admin/posts?success=${encodeURIComponent(
@@ -632,31 +764,47 @@ export async function changeBlogPostStatus(form: FormData) {
   const { supabase } = await requireBlogAdmin();
 
   const id = field(form, "id");
-
   const status = field(form, "status") as BlogPostStatus;
 
   if (!validUUID(id) || !BLOG_STATUS.includes(status)) {
     fail("/blog-admin/posts", "Invalid article or status");
   }
 
-  const { data: post, error: readError } = await supabase
+  // Retrieve article and destination assignments concurrently.
+  const [postResult, assignmentsResult] = await Promise.all([
+    supabase
+      .from("blog_posts")
+      .select("id,published_at,slug")
+      .eq("id", id)
+      .single(),
 
-    .from("blog_posts")
+    supabase.from("blog_post_pages").select("page_id").eq("post_id", id),
+  ]);
 
-    .select("id,published_at,slug")
+  const post = postResult.data;
 
-    .eq("id", id)
-
-    .single();
-
-  if (readError || !post) {
+  if (postResult.error || !post) {
     fail("/blog-admin/posts", "Article not found");
   }
 
+  if (assignmentsResult.error) {
+    fail("/blog-admin/posts", "Could not load article publishing destinations");
+  }
+
+  const assignedPageIds = [
+    ...new Set((assignmentsResult.data ?? []).map((item) => item.page_id)),
+  ];
+
+  if (status === "PUBLISHED" && !assignedPageIds.length) {
+    fail(
+      "/blog-admin/posts",
+      "Select at least one publishing destination before publishing",
+    );
+  }
+
+  // Update article status and preserve original publication date.
   const { error } = await supabase
-
     .from("blog_posts")
-
     .update({
       status,
 
@@ -667,20 +815,25 @@ export async function changeBlogPostStatus(form: FormData) {
 
       updated_at: new Date().toISOString(),
     })
-
     .eq("id", id);
 
   if (error) {
     fail("/blog-admin/posts", "Could not change article status");
   }
 
+  // Refresh admin pages.
   revalidatePath("/blog-admin/dashboard");
-
   revalidatePath("/blog-admin/posts");
+  revalidatePath(`/blog-admin/posts/${id}/edit`);
 
+  // Refresh all assigned country and city destinations.
+  await revalidatePublishingDestinations(supabase, assignedPageIds);
+
+  // Refresh global blog, categories, article and sitemap.
   revalidatePath("/blog");
-
+  revalidatePath("/blog/category/[slug]", "page");
   revalidatePath(`/blog/${post.slug}`);
+  revalidatePath("/sitemap.xml");
 
   redirect(
     `/blog-admin/posts?success=${encodeURIComponent(
@@ -727,7 +880,7 @@ const COUNTRY_FIELDS: { key: CountryEditableField; max: number }[] = [
 export async function saveCountryLandingPage(form: FormData) {
   const { supabase } = await requireBlogAdmin();
   const id = field(form, "id");
-  if (!validUUID(id)) fail("/blog-admin/pages", "Invalid country page");
+  if (!validUUID(id)) fail("/blog-admin/pages", "Invalid destination page");
   const path = `/blog-admin/pages/${id}/edit`;
 
   const heading = field(form, "heading");
@@ -747,11 +900,16 @@ export async function saveCountryLandingPage(form: FormData) {
 
   const { data: page, error: readError } = await supabase
     .from("blog_pages")
-    .select("id,slug,status,content")
+    .select("id,slug,page_type,status,content")
     .eq("id", id)
-    .eq("page_type", "COUNTRY")
+    .in("page_type", ["COUNTRY", "CITY"])
     .single();
-  if (readError || !page) fail(path, "Country page not found");
+
+  if (readError || !page) {
+    fail(path, "Destination page not found");
+  }
+
+  const destinationLabel = page.page_type === "CITY" ? "City" : "Country";
 
   // Merge with the previously saved document rather than dropping legacy text.
   const content = parseCountryPageContent(page.content);
@@ -777,7 +935,7 @@ export async function saveCountryLandingPage(form: FormData) {
   if (page.status === "PUBLISHED" && !validCountryContent(updatedPage)) {
     fail(
       path,
-      "A published page requires an H1, introduction, SEO fields and 300+ characters of country body content. Unpublish to save an incomplete draft.",
+      `A published ${destinationLabel.toLowerCase()} page requires an H1, introduction, SEO fields and 300+ characters of original body content. Unpublish to save an incomplete draft.`,
     );
   }
 
@@ -785,34 +943,49 @@ export async function saveCountryLandingPage(form: FormData) {
     .from("blog_pages")
     .update({ ...updatedPage, updated_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("page_type", "COUNTRY");
-  if (error) fail(path, `Could not save country page: ${error.message}`);
+    .in("page_type", ["COUNTRY", "CITY"]);
+  if (error) {
+    fail(path, `Could not save ${destinationLabel.toLowerCase()} page`);
+  }
   revalidatePath(`/blog-admin/pages/${id}/edit`);
   revalidatePath("/blog-admin/pages");
   revalidatePath(`/${page.slug}`);
-  // Country pages remain excluded from sitemap intentionally.
+
+  // Refresh sitemap after landing-page content changes.
+  revalidatePath("/sitemap.xml");
   redirect(
-    `${path}?success=${encodeURIComponent("Country SEO content saved")}`,
+    `${path}?success=${encodeURIComponent(
+      `${destinationLabel} SEO content saved`,
+    )}`,
   );
 }
 
 export async function changeCountryLandingPageStatus(form: FormData) {
   const { supabase } = await requireBlogAdmin();
+
   const id = field(form, "id");
   const status = field(form, "status");
+
   if (!validUUID(id) || !["DRAFT", "PUBLISHED"].includes(status)) {
-    fail("/blog-admin/pages", "Invalid country page or status");
+    fail("/blog-admin/pages", "Invalid destination or status");
   }
+
   const path = `/blog-admin/pages/${id}/edit`;
+
   const { data: page, error: readError } = await supabase
     .from("blog_pages")
     .select(
-      "id,slug,country_id,heading,description,seo_title,seo_description,content",
+      "id,slug,page_type,country_id,heading,description,seo_title,seo_description,content",
     )
     .eq("id", id)
-    .eq("page_type", "COUNTRY")
+    .in("page_type", ["COUNTRY", "CITY"])
     .single();
-  if (readError || !page?.country_id) fail(path, "Country page not found");
+
+  if (readError || !page?.country_id) {
+    fail(path, "Destination not found");
+  }
+
+  const destinationLabel = page.page_type === "CITY" ? "City" : "Country";
 
   if (status === "PUBLISHED") {
     const { data: country, error: countryError } = await supabase
@@ -821,8 +994,11 @@ export async function changeCountryLandingPageStatus(form: FormData) {
       .eq("id", page.country_id)
       .eq("is_active", true)
       .maybeSingle();
-    if (countryError || !country)
+
+    if (countryError || !country) {
       fail(path, "Country must be active before publishing");
+    }
+
     if (!validCountryContent(page)) {
       fail(
         path,
@@ -830,17 +1006,44 @@ export async function changeCountryLandingPageStatus(form: FormData) {
       );
     }
   }
+
   const { error } = await supabase
     .from("blog_pages")
-    .update({ status, updated_at: new Date().toISOString() })
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id)
-    .eq("page_type", "COUNTRY");
-  if (error)
-    fail(path, `Could not change country publishing status: ${error.message}`);
+    .in("page_type", ["COUNTRY", "CITY"]);
+
+  if (error) {
+    fail(
+      path,
+      `Could not change destination publishing status: ${error.message}`,
+    );
+  }
+
+  // Refresh Blog CMS pages.
   revalidatePath("/blog-admin/pages");
+  revalidatePath("/blog-admin/dashboard");
   revalidatePath(path);
+
+  // Refresh the public destination.
   revalidatePath(`/${page.slug}`);
+
+  // Destination status can affect assigned article visibility.
+  revalidatePath("/blog");
+  revalidatePath("/blog/[slug]", "page");
+  revalidatePath("/blog/category/[slug]", "page");
+
+  // Refresh sitemap after publishing or unpublishing.
+  revalidatePath("/sitemap.xml");
+
   redirect(
-    `${path}?success=${encodeURIComponent(status === "PUBLISHED" ? "Country page published" : "Country page unpublished")}`,
+    `${path}?success=${encodeURIComponent(
+      status === "PUBLISHED"
+        ? `${destinationLabel} page published`
+        : `${destinationLabel} page unpublished`,
+    )}`,
   );
 }

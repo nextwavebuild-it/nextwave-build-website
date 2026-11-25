@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createClient } from "@supabase/supabase-js";
+import { getCountryBodyText } from "@/lib/country-page-content";
 
 const url = process.env.NEXT_PUBLIC_BLOG_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_BLOG_SUPABASE_PUBLISHABLE_KEY;
@@ -17,6 +18,8 @@ export const blogPublic = createClient(url, key, {
   },
 });
 
+const VALID_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 export type PublicBlogPost = {
   id: string;
   title: string;
@@ -32,8 +35,129 @@ export type PublicBlogPost = {
   category_id: string | null;
 };
 
+// ==========================================
+// DESTINATION CONTENT VALIDATION
+// ==========================================
+
+function hasValidDestinationContent(page: {
+  heading: string | null;
+  description: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  content: unknown;
+}): boolean {
+  return (
+    (page.heading?.trim().length ?? 0) >= 10 &&
+    (page.description?.trim().length ?? 0) >= 100 &&
+    (page.seo_title?.trim().length ?? 0) >= 10 &&
+    (page.seo_description?.trim().length ?? 0) >= 50 &&
+    getCountryBodyText(page.content).length >= 300
+  );
+}
+
+// ==========================================
+// VERIFY PUBLIC ARTICLE DESTINATIONS
+// ==========================================
+
+async function hasPublicDestination(postId: string): Promise<boolean> {
+  // Retrieve the article's visible publishing assignments.
+  const { data: placements, error: placementError } = await blogPublic
+    .from("blog_post_pages")
+    .select("page_id")
+    .eq("post_id", postId);
+
+  if (placementError) {
+    throw new Error("Unable to verify article publishing assignments.");
+  }
+
+  const pageIds = [
+    ...new Set((placements ?? []).map((placement) => placement.page_id)),
+  ];
+
+  if (!pageIds.length) {
+    return false;
+  }
+
+  // Only supported, published public destinations are eligible.
+  const { data: pages, error: pageError } = await blogPublic
+    .from("blog_pages")
+    .select(
+      "id,slug,page_type,country_id,heading,description,seo_title,seo_description,content",
+    )
+    .in("id", pageIds)
+    .in("page_type", ["GLOBAL", "COUNTRY", "CITY"])
+    .eq("status", "PUBLISHED");
+
+  if (pageError) {
+    throw new Error("Unable to verify article publishing destinations.");
+  }
+
+  if (!pages?.length) {
+    return false;
+  }
+
+  // A published Global Blog assignment is sufficient.
+  const hasGlobalDestination = pages.some(
+    (page) => page.page_type === "GLOBAL",
+  );
+
+  if (hasGlobalDestination) {
+    return true;
+  }
+
+  // Validate country and city landing pages.
+  const geographicalPages = pages.filter(
+    (page) =>
+      ["COUNTRY", "CITY"].includes(page.page_type) &&
+      Boolean(page.country_id) &&
+      VALID_SLUG.test(page.slug) &&
+      hasValidDestinationContent(page),
+  );
+
+  if (!geographicalPages.length) {
+    return false;
+  }
+
+  // Retrieve unique parent countries.
+  const countryIds = [
+    ...new Set(
+      geographicalPages
+        .map((page) => page.country_id)
+        .filter((id): id is string => typeof id === "string"),
+    ),
+  ];
+
+  if (!countryIds.length) {
+    return false;
+  }
+
+  // Country and city destinations require an active parent country.
+  const { data: activeCountries, error: countryError } = await blogPublic
+    .from("blog_countries")
+    .select("id")
+    .in("id", countryIds)
+    .eq("is_active", true);
+
+  if (countryError) {
+    throw new Error("Unable to verify destination country status.");
+  }
+
+  const activeCountryIds = new Set(
+    (activeCountries ?? []).map((country) => country.id),
+  );
+
+  // At least one eligible country or city is sufficient.
+  return geographicalPages.some(
+    (page) => Boolean(page.country_id) && activeCountryIds.has(page.country_id),
+  );
+}
+
+// ==========================================
+// GET INDIVIDUAL PUBLIC BLOG ARTICLE
+// ==========================================
+
 export async function getPublicBlogPost(slug: string) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+  if (!VALID_SLUG.test(slug)) {
     return null;
   }
 
@@ -47,26 +171,27 @@ export async function getPublicBlogPost(slug: string) {
     .lte("published_at", new Date().toISOString())
     .maybeSingle();
 
-  if (error) throw new Error("Unable to load blog article.");
-  if (!post) return null;
-
-  // Require at least one published destination.
-  // Draft country pages do not count as public destinations.
-  const { data: placements, error: placementError } = await blogPublic
-    .from("blog_post_pages")
-    .select("page_id,blog_pages!inner(id)")
-    .eq("post_id", post.id)
-    .eq("blog_pages.status", "PUBLISHED")
-    .limit(1);
-
-  if (placementError) {
-    throw new Error("Unable to verify article visibility.");
+  if (error) {
+    throw new Error("Unable to load blog article.");
   }
 
-  if (!placements?.length) return null;
+  if (!post) {
+    return null;
+  }
+
+  // Require at least one eligible public destination.
+  const isPublic = await hasPublicDestination(post.id);
+
+  if (!isPublic) {
+    return null;
+  }
 
   return post as PublicBlogPost;
 }
+
+// ==========================================
+// GET GLOBAL BLOG ARTICLES
+// ==========================================
 
 export async function getGlobalBlogPosts(
   page = 1,
