@@ -5,9 +5,9 @@ import { getCountryBodyText } from "@/lib/country-page-content";
 
 const BASE_URL = "https://nextwavebuild.com";
 
-// Refresh the sitemap every hour when supported
-// by the Next.js deployment/cache configuration.
-export const revalidate = 3600;
+// Generate the sitemap dynamically from current CMS content.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const BATCH_SIZE = 500;
 const CATEGORY_BATCH_SIZE = 100;
