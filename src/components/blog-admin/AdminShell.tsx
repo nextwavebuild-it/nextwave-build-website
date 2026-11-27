@@ -12,6 +12,10 @@ import {
   Globe2,
   LogOut,
   BookOpen,
+  GraduationCap,
+  Layers,
+  Users,
+  MessageSquareQuote,
 } from "lucide-react";
 
 import { blogLogout } from "@/lib/blog-admin/actions";
@@ -37,6 +41,26 @@ const navigation = [
     href: "/blog-admin/pages",
     icon: Globe2,
   },
+  {
+    label: "Programmes",
+    href: "/blog-admin/programmes",
+    icon: GraduationCap,
+  },
+  {
+    label: "Shared Content",
+    href: "/blog-admin/shared-content",
+    icon: Layers,
+  },
+  {
+    label: "Mentors",
+    href: "/blog-admin/mentors",
+    icon: Users,
+  },
+  {
+    label: "Testimonials",
+    href: "/blog-admin/testimonials",
+    icon: MessageSquareQuote,
+  },
 ];
 
 export default function AdminShell({ children }: { children: ReactNode }) {
@@ -47,7 +71,11 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     pathname === "/blog-admin/reset-password" ||
     pathname.startsWith("/blog-admin/auth/");
 
-  if (isAuthPage) {
+  const isGeographicPreview = /^\/blog-admin\/pages\/[^/]+\/preview\/?$/.test(
+    pathname,
+  );
+
+  if (isAuthPage || isGeographicPreview) {
     return (
       <div className="min-h-screen bg-[#101214] text-white">{children}</div>
     );
@@ -96,7 +124,15 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                   pathname.startsWith("/blog-admin/posts/") &&
                   pathname !== "/blog-admin/posts/new") ||
                 (item.href === "/blog-admin/pages" &&
-                  pathname.startsWith("/blog-admin/pages/"));
+                  pathname.startsWith("/blog-admin/pages/")) ||
+                (item.href === "/blog-admin/programmes" &&
+                  pathname.startsWith("/blog-admin/programmes/")) ||
+                (item.href === "/blog-admin/shared-content" &&
+                  pathname.startsWith("/blog-admin/shared-content/")) ||
+                (item.href === "/blog-admin/mentors" &&
+                  pathname.startsWith("/blog-admin/mentors/")) ||
+                (item.href === "/blog-admin/testimonials" &&
+                  pathname.startsWith("/blog-admin/testimonials/"));
 
               return (
                 <Link

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createClient } from "@supabase/supabase-js";
-import { getCountryBodyText } from "@/lib/country-page-content";
+import { validateCountryPagePublication } from "@/lib/country-page-content";
 
 const url = process.env.NEXT_PUBLIC_BLOG_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_BLOG_SUPABASE_PUBLISHABLE_KEY;
@@ -46,13 +46,7 @@ function hasValidDestinationContent(page: {
   seo_description: string | null;
   content: unknown;
 }): boolean {
-  return (
-    (page.heading?.trim().length ?? 0) >= 10 &&
-    (page.description?.trim().length ?? 0) >= 100 &&
-    (page.seo_title?.trim().length ?? 0) >= 10 &&
-    (page.seo_description?.trim().length ?? 0) >= 50 &&
-    getCountryBodyText(page.content).length >= 300
-  );
+  return validateCountryPagePublication(page).valid;
 }
 
 // ==========================================
@@ -244,5 +238,255 @@ export async function getGlobalBlogPosts(
     total: count ?? 0,
     page: currentPage,
     pageSize,
+  };
+}
+
+// ==========================================
+// GEOGRAPHIC PAGE PUBLIC CONTENT TYPES
+// ==========================================
+
+export type PublicBlogProgramme = {
+  id: string;
+  name: string;
+  slug: string;
+  short_description: string;
+  description: string;
+  image_url: string | null;
+  image_alt: string | null;
+  programme_url: string;
+  price_minor: number | null;
+  original_price_minor: number | null;
+  currency: string;
+  duration: string | null;
+  learning_format: string | null;
+  skill_level: string | null;
+  features: unknown;
+  learning_outcomes: unknown;
+  cta_label: string;
+  sort_order: number;
+};
+
+export type PublicBlogMentor = {
+  id: string;
+  name: string;
+  slug: string;
+  professional_title: string;
+  biography: string;
+  image_url: string | null;
+  image_alt: string | null;
+  programme_id: string | null;
+  expertise: unknown;
+  years_of_experience: number | null;
+  sort_order: number;
+};
+
+export type PublicBlogTestimonial = {
+  id: string;
+  student_name: string;
+  professional_title: string | null;
+  testimonial: string;
+  image_url: string | null;
+  image_alt: string | null;
+  rating: number | null;
+  programme_id: string | null;
+  page_id: string | null;
+  sort_order: number;
+};
+
+export type PublicBlogSharedContent = {
+  id: string;
+  section_key: string;
+  heading: string;
+  description: string;
+  content: unknown;
+};
+
+export type PublicRelatedLocation = {
+  id: string;
+  name: string;
+  slug: string;
+  page_type: "COUNTRY" | "CITY";
+  country_id: string;
+};
+
+// ==========================================
+// GET ACTIVE PUBLIC PROGRAMMES
+// ==========================================
+
+export async function getPublicBlogProgrammes(): Promise<
+  PublicBlogProgramme[]
+> {
+  const { data, error } = await blogPublic
+    .from("blog_programmes")
+    .select(
+      `
+      id,
+      name,
+      slug,
+      short_description,
+      description,
+      image_url,
+      image_alt,
+      programme_url,
+      price_minor,
+      original_price_minor,
+      currency,
+      duration,
+      learning_format,
+      skill_level,
+      features,
+      learning_outcomes,
+      cta_label,
+      sort_order
+    `,
+    )
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error("Unable to load public programmes.");
+  }
+
+  return (data ?? []) as PublicBlogProgramme[];
+}
+
+// ==========================================
+// GET ACTIVE PUBLIC MENTORS
+// ==========================================
+
+export async function getPublicBlogMentors(): Promise<PublicBlogMentor[]> {
+  const { data, error } = await blogPublic
+    .from("blog_mentors")
+    .select(
+      `
+      id,
+      name,
+      slug,
+      professional_title,
+      biography,
+      image_url,
+      image_alt,
+   
+      programme_id,
+      expertise,
+      years_of_experience,
+      sort_order
+    `,
+    )
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error("Unable to load public mentor profiles.");
+  }
+
+  return (data ?? []) as PublicBlogMentor[];
+}
+
+// ==========================================
+// GET APPROVED PUBLIC TESTIMONIALS
+// ==========================================
+
+export async function getPublicBlogTestimonials(
+  pageId: string,
+): Promise<PublicBlogTestimonial[]> {
+  const { data, error } = await blogPublic.rpc("get_public_blog_testimonials", {
+    p_page_id: pageId,
+  });
+
+  if (error) {
+    console.error("Public testimonial RPC error:", error);
+
+    throw new Error("Unable to load public testimonials.");
+  }
+
+  return (data ?? []) as PublicBlogTestimonial[];
+}
+
+// ==========================================
+// GET ACTIVE SHARED CONTENT
+// ==========================================
+
+export async function getPublicBlogSharedContent(): Promise<
+  Record<string, PublicBlogSharedContent>
+> {
+  const { data, error } = await blogPublic
+    .from("blog_shared_content")
+    .select(
+      `
+      id,
+      section_key,
+      heading,
+      description,
+      content
+    `,
+    )
+    .eq("is_active", true);
+
+  if (error) {
+    throw new Error("Unable to load shared geographic content.");
+  }
+
+  const sections: Record<string, PublicBlogSharedContent> = Object.create(null);
+
+  for (const section of data ?? []) {
+    sections[section.section_key] = section;
+  }
+
+  return sections;
+}
+
+// ==========================================
+// GET RELATED GEOGRAPHIC LOCATIONS
+// ==========================================
+
+export async function getPublicRelatedLocations(
+  currentPageId: string,
+  countryId: string,
+): Promise<PublicRelatedLocation[]> {
+  const { data, error } = await blogPublic
+    .from("blog_pages")
+    .select("id,name,slug,page_type,country_id")
+    .in("page_type", ["COUNTRY", "CITY"])
+    .eq("status", "PUBLISHED")
+    .eq("country_id", countryId)
+    .neq("id", currentPageId)
+    .order("page_type", { ascending: false })
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error("Unable to load related locations.");
+  }
+
+  return (data ?? []).filter((page) =>
+    VALID_SLUG.test(page.slug),
+  ) as PublicRelatedLocation[];
+}
+
+// ==========================================
+// GET COMPLETE GEOGRAPHIC PAGE RESOURCES
+// ==========================================
+
+export async function getPublicGeographicResources(
+  pageId: string,
+  countryId: string,
+) {
+  const [programmes, mentors, testimonials, sharedContent, relatedLocations] =
+    await Promise.all([
+      getPublicBlogProgrammes(),
+      getPublicBlogMentors(),
+      getPublicBlogTestimonials(pageId),
+      getPublicBlogSharedContent(),
+      getPublicRelatedLocations(pageId, countryId),
+    ]);
+
+  return {
+    programmes,
+    mentors,
+    testimonials,
+    sharedContent,
+    relatedLocations,
   };
 }

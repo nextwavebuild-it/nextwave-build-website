@@ -2,9 +2,9 @@
 
 import { parseBlogDocument } from "@/lib/blog-admin/content";
 import {
-  getCountryBodyText,
-  parseCountryPageContent,
-  type CountryPageContentV2,
+  parseCountryPageContentV3,
+  validateCountryPagePublication,
+  type CountryPageContentV3,
 } from "@/lib/country-page-content";
 
 import { redirect } from "next/navigation";
@@ -844,28 +844,12 @@ export async function changeBlogPostStatus(form: FormData) {
 
 // ==================== Country landing-page management ====================
 
-function validCountryContent(page: {
-  heading: string | null;
-  description: string | null;
-  seo_title: string | null;
-  seo_description: string | null;
-  content: unknown;
-}): boolean {
-  return (
-    (page.heading?.trim().length ?? 0) >= 10 &&
-    (page.description?.trim().length ?? 0) >= 100 &&
-    (page.seo_title?.trim().length ?? 0) >= 10 &&
-    (page.seo_description?.trim().length ?? 0) >= 50 &&
-    getCountryBodyText(page.content).length >= 300
-  );
-}
+type GeoTextField = {
+  key: keyof CountryPageContentV3;
+  max: number;
+};
 
-type CountryEditableField = Exclude<
-  keyof CountryPageContentV2,
-  "format" | "text"
->;
-
-const COUNTRY_FIELDS: { key: CountryEditableField; max: number }[] = [
+const GEO_TEXT_FIELDS: GeoTextField[] = [
   { key: "heroEyebrow", max: 120 },
   { key: "introTitle", max: 180 },
   { key: "insightsTitle", max: 180 },
@@ -875,13 +859,137 @@ const COUNTRY_FIELDS: { key: CountryEditableField; max: number }[] = [
   { key: "ctaTitle", max: 180 },
   { key: "ctaDescription", max: 1000 },
   { key: "ctaButtonText", max: 60 },
+
+  { key: "heroImageUrl", max: 2000 },
+  { key: "heroImageAlt", max: 180 },
+  { key: "heroPrimaryCtaText", max: 60 },
+  { key: "heroSecondaryCtaText", max: 60 },
+
+  { key: "trustTitle", max: 180 },
+  { key: "trustDescription", max: 1000 },
+  { key: "comparisonTitle", max: 180 },
+  { key: "comparisonDescription", max: 1000 },
+  { key: "audienceTitle", max: 180 },
+  { key: "audienceDescription", max: 1000 },
+  { key: "whyNextWaveTitle", max: 180 },
+  { key: "whyNextWaveDescription", max: 1000 },
+  { key: "learningMethodTitle", max: 180 },
+  { key: "learningMethodDescription", max: 1000 },
+  { key: "mentorsTitle", max: 180 },
+  { key: "mentorsDescription", max: 1000 },
+  { key: "testimonialsTitle", max: 180 },
+  { key: "testimonialsDescription", max: 1000 },
+  { key: "enrollmentTitle", max: 180 },
+  { key: "enrollmentDescription", max: 1000 },
+  { key: "relatedLocationsTitle", max: 180 },
+  { key: "relatedLocationsDescription", max: 1000 },
+  { key: "faqTitle", max: 180 },
+  { key: "faqDescription", max: 1000 },
 ];
 
+function readGeoItems(form: FormData, key: string, path: string) {
+  const titles = form.getAll(`${key}_title`).map(String);
+  const descriptions = form.getAll(`${key}_description`).map(String);
+
+  if (titles.length !== descriptions.length || titles.length > 30) {
+    fail(path, `Invalid items in ${key}`);
+  }
+
+  const items: {
+    title: string;
+    description: string;
+  }[] = [];
+
+  for (let i = 0; i < titles.length; i++) {
+    const title = titles[i].trim();
+    const description = descriptions[i].trim();
+
+    if (!title && !description) continue;
+
+    if (
+      !title ||
+      !description ||
+      title.length > 180 ||
+      description.length > 2000
+    ) {
+      fail(path, `Invalid or incomplete item in ${key}`);
+    }
+
+    items.push({ title, description });
+  }
+
+  return items;
+}
+
+function refreshGeographicPage(id: string, slug: string) {
+  revalidatePath(`/blog-admin/pages/${id}/edit`);
+  revalidatePath("/blog-admin/pages");
+  revalidatePath("/blog-admin/dashboard");
+  revalidatePath(`/${slug}`);
+  revalidatePath("/blog");
+  revalidatePath("/blog/[slug]", "page");
+  revalidatePath("/blog/category/[slug]", "page");
+  revalidatePath("/sitemap.xml");
+}
+
+// ==========================================
+// SAVE PRIVATE GEOGRAPHIC DRAFT
+// ==========================================
+
 export async function saveCountryLandingPage(form: FormData) {
-  const { supabase } = await requireBlogAdmin();
+  const { supabase, user } = await requireBlogAdmin();
+
   const id = field(form, "id");
-  if (!validUUID(id)) fail("/blog-admin/pages", "Invalid destination page");
+
+  if (!validUUID(id)) {
+    fail("/blog-admin/pages", "Invalid destination page");
+  }
+
   const path = `/blog-admin/pages/${id}/edit`;
+
+  const expectedPageVersion = field(form, "base_updated_at");
+
+  const expectedDraftVersion = field(form, "draft_updated_at");
+
+  const [pageResult, draftResult] = await Promise.all([
+    supabase
+      .from("blog_pages")
+      .select("id,slug,page_type,content,updated_at")
+      .eq("id", id)
+      .in("page_type", ["COUNTRY", "CITY"])
+      .single(),
+
+    supabase
+      .from("blog_page_drafts")
+      .select("*")
+      .eq("page_id", id)
+      .maybeSingle(),
+  ]);
+
+  const page = pageResult.data;
+  const draft = draftResult.data;
+
+  if (pageResult.error || !page || draftResult.error) {
+    fail(path, "Could not load geographic page");
+  }
+
+  if (page.updated_at !== expectedPageVersion) {
+    fail(path, "The live page has changed. Reload the editor.");
+  }
+
+  if (draft && draft.base_updated_at !== page.updated_at) {
+    fail(
+      path,
+      "The live page has changed since this draft was created. Discard the outdated draft before editing again.",
+    );
+  }
+
+  if ((draft?.updated_at ?? "") !== expectedDraftVersion) {
+    fail(
+      path,
+      "Another administrator changed this draft. Reload before saving.",
+    );
+  }
 
   const heading = field(form, "heading");
   const description = field(form, "description");
@@ -895,70 +1003,233 @@ export async function saveCountryLandingPage(form: FormData) {
     seoTitle.length > 180 ||
     seoDescription.length > 300 ||
     contentText.length > 15000
-  )
-    fail(path, "One or more fields exceed their maximum length");
-
-  const { data: page, error: readError } = await supabase
-    .from("blog_pages")
-    .select("id,slug,page_type,status,content")
-    .eq("id", id)
-    .in("page_type", ["COUNTRY", "CITY"])
-    .single();
-
-  if (readError || !page) {
-    fail(path, "Destination page not found");
+  ) {
+    fail(path, "One or more fields are too long");
   }
 
-  const destinationLabel = page.page_type === "CITY" ? "City" : "Country";
+  const content = parseCountryPageContentV3(draft?.content ?? page.content);
 
-  // Merge with the previously saved document rather than dropping legacy text.
-  const content = parseCountryPageContent(page.content);
-  content.text = contentText;
-  for (const { key, max } of COUNTRY_FIELDS) {
+  const textFields: Record<string, string> = {};
+
+  for (const { key, max } of GEO_TEXT_FIELDS) {
     const value = field(form, key);
-    if (!value || value.length > max) {
-      fail(
-        path,
-        `${key} is required and must be no longer than ${max} characters`,
-      );
+
+    if (value.length > max) {
+      fail(path, `${key} exceeds ${max} characters`);
     }
-    content[key] = value;
+
+    textFields[key] = value;
   }
 
-  const updatedPage = {
-    heading: heading || null,
-    description: description || null,
-    seo_title: seoTitle || null,
-    seo_description: seoDescription || null,
-    content,
+  const imageUrl = textFields.heroImageUrl;
+
+  if (imageUrl) {
+    let validImage = false;
+
+    if (
+      imageUrl.startsWith("/") &&
+      !imageUrl.startsWith("//") &&
+      !imageUrl.includes("\\")
+    ) {
+      validImage = true;
+    } else {
+      try {
+        validImage = new URL(imageUrl).protocol === "https:";
+      } catch {
+        validImage = false;
+      }
+    }
+
+    if (!validImage) {
+      fail(path, "Use a valid HTTPS or local hero image URL");
+    }
+  }
+
+  const sections = { ...content.sections };
+
+  for (const key of Object.keys(sections) as (keyof typeof sections)[]) {
+    sections[key] = form.get(`section_${key}`) === "on";
+  }
+
+  const updatedContent: CountryPageContentV3 = {
+    ...content,
+    ...textFields,
+
+    format: "country_page_v3",
+    text: contentText,
+
+    sections,
+
+    trustBenefits: readGeoItems(form, "trustBenefits", path),
+
+    audienceItems: readGeoItems(form, "audienceItems", path),
+
+    whyNextWaveItems: readGeoItems(form, "whyNextWaveItems", path),
+
+    enrollmentSteps: readGeoItems(form, "enrollmentSteps", path),
+
+    faqs: readGeoItems(form, "faqs", path).map((item) => ({
+      question: item.title,
+      answer: item.description,
+    })),
   };
-  if (page.status === "PUBLISHED" && !validCountryContent(updatedPage)) {
-    fail(
-      path,
-      `A published ${destinationLabel.toLowerCase()} page requires an H1, introduction, SEO fields and 300+ characters of original body content. Unpublish to save an incomplete draft.`,
-    );
+
+  const values = {
+    page_id: id,
+    heading,
+    description,
+    seo_title: seoTitle,
+    seo_description: seoDescription,
+    content: updatedContent,
+    base_updated_at: page.updated_at,
+    updated_by: user.id,
+  };
+
+  if (draft) {
+    const { data, error } = await supabase
+      .from("blog_page_drafts")
+      .update(values)
+      .eq("page_id", id)
+      .eq("updated_at", expectedDraftVersion)
+      .select("id")
+      .maybeSingle();
+
+    if (error || !data) {
+      fail(path, "Draft changed or could not be saved");
+    }
+  } else {
+    const { error } = await supabase.from("blog_page_drafts").insert(values);
+
+    if (error) {
+      fail(path, "Could not create draft. Reload and retry.");
+    }
   }
 
-  const { error } = await supabase
-    .from("blog_pages")
-    .update({ ...updatedPage, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .in("page_type", ["COUNTRY", "CITY"]);
-  if (error) {
-    fail(path, `Could not save ${destinationLabel.toLowerCase()} page`);
-  }
-  revalidatePath(`/blog-admin/pages/${id}/edit`);
+  // Only refresh admin pages; live content is unchanged.
+
+  revalidatePath(path);
   revalidatePath("/blog-admin/pages");
-  revalidatePath(`/${page.slug}`);
 
-  // Refresh sitemap after landing-page content changes.
-  revalidatePath("/sitemap.xml");
   redirect(
     `${path}?success=${encodeURIComponent(
-      `${destinationLabel} SEO content saved`,
+      "Draft saved. Live content remains unchanged.",
     )}`,
   );
 }
+
+// ==========================================
+// PUBLISH SAVED GEOGRAPHIC DRAFT
+// ==========================================
+
+export async function publishCountryLandingPageDraft(form: FormData) {
+  const { supabase } = await requireBlogAdmin();
+
+  const id = field(form, "id");
+
+  if (!validUUID(id)) {
+    fail("/blog-admin/pages", "Invalid destination");
+  }
+
+  const path = `/blog-admin/pages/${id}/edit`;
+
+  const expectedDraftVersion = field(form, "draft_updated_at");
+
+  if (!expectedDraftVersion) {
+    fail(path, "Save a draft before publishing");
+  }
+
+  const [pageResult, draftResult] = await Promise.all([
+    supabase
+      .from("blog_pages")
+      .select("id,slug")
+      .eq("id", id)
+      .in("page_type", ["COUNTRY", "CITY"])
+      .single(),
+
+    supabase.from("blog_page_drafts").select("*").eq("page_id", id).single(),
+  ]);
+
+  const page = pageResult.data;
+  const draft = draftResult.data;
+
+  if (pageResult.error || draftResult.error || !page || !draft) {
+    fail(path, "Saved draft or destination not found");
+  }
+
+  if (draft.updated_at !== expectedDraftVersion) {
+    fail(path, "Draft has changed. Reload before publishing.");
+  }
+
+  const validation = validateCountryPagePublication(draft);
+
+  if (!validation.valid) {
+    fail(path, validation.errors.join(" "));
+  }
+
+  const { error } = await supabase.rpc("publish_blog_page_draft", {
+    p_page_id: id,
+    p_expected_draft_updated_at: expectedDraftVersion,
+  });
+
+  if (error) {
+    fail(path, `Could not publish draft: ${error.message}`);
+  }
+
+  refreshGeographicPage(id, page.slug);
+
+  redirect(
+    `${path}?success=${encodeURIComponent(
+      "Geographic page published successfully.",
+    )}`,
+  );
+}
+
+// ==========================================
+// DISCARD PRIVATE WORKING DRAFT
+// ==========================================
+
+export async function discardCountryLandingPageDraft(form: FormData) {
+  const { supabase } = await requireBlogAdmin();
+
+  const id = field(form, "id");
+
+  if (!validUUID(id)) {
+    fail("/blog-admin/pages", "Invalid destination");
+  }
+
+  const path = `/blog-admin/pages/${id}/edit`;
+
+  const expectedDraftVersion = field(form, "draft_updated_at");
+
+  if (!expectedDraftVersion) {
+    fail(path, "No draft selected");
+  }
+
+  const { data, error } = await supabase
+    .from("blog_page_drafts")
+    .delete()
+    .eq("page_id", id)
+    .eq("updated_at", expectedDraftVersion)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !data) {
+    fail(path, "Draft changed or could not be discarded");
+  }
+
+  revalidatePath(path);
+  revalidatePath("/blog-admin/pages");
+
+  redirect(
+    `${path}?success=${encodeURIComponent(
+      "Working draft discarded. Live content was preserved.",
+    )}`,
+  );
+}
+
+// ==========================================
+// UNPUBLISH GEOGRAPHIC PAGE
+// ==========================================
 
 export async function changeCountryLandingPageStatus(form: FormData) {
   const { supabase } = await requireBlogAdmin();
@@ -966,84 +1237,51 @@ export async function changeCountryLandingPageStatus(form: FormData) {
   const id = field(form, "id");
   const status = field(form, "status");
 
-  if (!validUUID(id) || !["DRAFT", "PUBLISHED"].includes(status)) {
-    fail("/blog-admin/pages", "Invalid destination or status");
+  if (!validUUID(id) || status !== "DRAFT") {
+    fail(
+      "/blog-admin/pages",
+      "Invalid status action. Use the draft publishing action to publish.",
+    );
   }
 
   const path = `/blog-admin/pages/${id}/edit`;
 
-  const { data: page, error: readError } = await supabase
-    .from("blog_pages")
-    .select(
-      "id,slug,page_type,country_id,heading,description,seo_title,seo_description,content",
-    )
-    .eq("id", id)
-    .in("page_type", ["COUNTRY", "CITY"])
-    .single();
+  const expectedPageVersion = field(form, "base_updated_at");
 
-  if (readError || !page?.country_id) {
-    fail(path, "Destination not found");
+  const { data: draft, error: draftError } = await supabase
+    .from("blog_page_drafts")
+    .select("id")
+    .eq("page_id", id)
+    .maybeSingle();
+
+  if (draftError) {
+    fail(path, "Could not check working draft");
   }
 
-  const destinationLabel = page.page_type === "CITY" ? "City" : "Country";
-
-  if (status === "PUBLISHED") {
-    const { data: country, error: countryError } = await supabase
-      .from("blog_countries")
-      .select("id")
-      .eq("id", page.country_id)
-      .eq("is_active", true)
-      .maybeSingle();
-
-    if (countryError || !country) {
-      fail(path, "Country must be active before publishing");
-    }
-
-    if (!validCountryContent(page)) {
-      fail(
-        path,
-        "Publishing requires an H1 (10+ characters), an introduction (100+), SEO title, meta description (50+), and original body content (300+). Save first.",
-      );
-    }
+  if (draft) {
+    fail(path, "Publish or discard the working draft before unpublishing.");
   }
 
-  const { error } = await supabase
+  const { data: page, error } = await supabase
     .from("blog_pages")
     .update({
-      status,
+      status: "DRAFT",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .in("page_type", ["COUNTRY", "CITY"]);
+    .eq("updated_at", expectedPageVersion)
+    .in("page_type", ["COUNTRY", "CITY"])
+    .eq("status", "PUBLISHED")
+    .select("id,slug")
+    .maybeSingle();
 
-  if (error) {
-    fail(
-      path,
-      `Could not change destination publishing status: ${error.message}`,
-    );
+  if (error || !page) {
+    fail(path, "Page changed or could not be unpublished");
   }
 
-  // Refresh Blog CMS pages.
-  revalidatePath("/blog-admin/pages");
-  revalidatePath("/blog-admin/dashboard");
-  revalidatePath(path);
-
-  // Refresh the public destination.
-  revalidatePath(`/${page.slug}`);
-
-  // Destination status can affect assigned article visibility.
-  revalidatePath("/blog");
-  revalidatePath("/blog/[slug]", "page");
-  revalidatePath("/blog/category/[slug]", "page");
-
-  // Refresh sitemap after publishing or unpublishing.
-  revalidatePath("/sitemap.xml");
+  refreshGeographicPage(id, page.slug);
 
   redirect(
-    `${path}?success=${encodeURIComponent(
-      status === "PUBLISHED"
-        ? `${destinationLabel} page published`
-        : `${destinationLabel} page unpublished`,
-    )}`,
+    `${path}?success=${encodeURIComponent("Geographic page unpublished.")}`,
   );
 }

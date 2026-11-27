@@ -3986,3 +3986,91 @@ section {
     transform: translateY(0) !important;
   }
 }
+
+/* ==========================================
+   NEXTWAVE BUILD — UNIVERSAL CARD SYSTEM
+========================================== */
+
+:root {
+  --nw-card-accent: #d5ff66;
+
+  --nw-card-border-dark: rgba(255, 255, 255, 0.12);
+  --nw-card-border-light: rgba(16, 18, 20, 0.12);
+
+  --nw-card-hover-lift: -4px;
+  --nw-card-transition: 300ms ease-in-out;
+
+  --nw-card-shadow-dark: 0 12px 28px rgba(0, 0, 0, 0.22);
+
+  --nw-card-shadow-light: 0 12px 28px rgba(16, 18, 20, 0.09);
+}
+
+/* ==========================================
+   BASE CARD STYLE
+========================================== */
+
+.nw-card-interactive {
+  --nw-card-border: var(--nw-card-border-dark);
+  --nw-card-shadow: var(--nw-card-shadow-dark);
+
+  border: 1px solid var(--nw-card-border);
+
+  transition:
+    transform var(--nw-card-transition),
+    border-color var(--nw-card-transition),
+    box-shadow var(--nw-card-transition);
+}
+
+/* ==========================================
+   DARK CARD VARIANT
+========================================== */
+
+.nw-card-interactive.nw-card-dark {
+  --nw-card-border: var(--nw-card-border-dark);
+  --nw-card-shadow: var(--nw-card-shadow-dark);
+}
+
+/* ==========================================
+   LIGHT CARD VARIANT
+========================================== */
+
+.nw-card-interactive.nw-card-light {
+  --nw-card-border: var(--nw-card-border-light);
+  --nw-card-shadow: var(--nw-card-shadow-light);
+}
+
+/* ==========================================
+   UNIVERSAL DESKTOP HOVER
+========================================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .nw-card-interactive:hover {
+    transform: translateY(var(--nw-card-hover-lift));
+    border-color: var(--nw-card-accent);
+    box-shadow: var(--nw-card-shadow);
+  }
+}
+
+/* ==========================================
+   KEYBOARD ACCESSIBILITY
+========================================== */
+
+.nw-card-interactive:focus-visible,
+.nw-card-interactive:focus-within {
+  border-color: var(--nw-card-accent);
+  box-shadow: var(--nw-card-shadow);
+}
+
+/* ==========================================
+   REDUCED MOTION ACCESSIBILITY
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-card-interactive {
+    transition: none;
+  }
+
+  .nw-card-interactive:hover {
+    transform: none;
+  }
+}

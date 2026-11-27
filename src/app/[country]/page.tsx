@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -11,18 +12,23 @@ import {
   Globe2,
   ShoppingBag,
 } from "lucide-react";
-import { blogPublic } from "@/lib/blog-public";
+import { blogPublic, getPublicGeographicResources } from "@/lib/blog-public";
+
 import {
-  getCountryBodyText,
+  getCountryPageContentFormat,
   parseCountryPageContent,
+  parseCountryPageContentV3,
   splitCountryBody,
+  validateCountryPagePublication,
 } from "@/lib/country-page-content";
+
+import GeographicPageV3 from "@/components/geographic/GeographicPageV3";
 
 export const dynamic = "force-dynamic";
 const SITE_URL = "https://nextwavebuild.com";
 type Props = { params: Promise<{ country: string }> };
 
-async function getCountryPage(slug: string) {
+const getCountryPage = cache(async (slug: string) => {
   // Validate public URL input.
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     return null;
@@ -61,19 +67,12 @@ async function getCountryPage(slug: string) {
   // Never expose destinations with inactive countries
   // or incomplete landing page content.
   // Keep validation aligned with publishing, sitemap and RLS rules.
-  if (
-    !activeCountry ||
-    (page.heading?.trim().length ?? 0) < 10 ||
-    (page.description?.trim().length ?? 0) < 100 ||
-    (page.seo_title?.trim().length ?? 0) < 10 ||
-    (page.seo_description?.trim().length ?? 0) < 50 ||
-    getCountryBodyText(page.content).length < 300
-  ) {
+  if (!activeCountry || !validateCountryPagePublication(page).valid) {
     return null;
   }
 
   return page;
-}
+});
 
 async function getCountryArticles(pageId: string) {
   const { data, error } = await blogPublic
@@ -90,30 +89,120 @@ async function getCountryArticles(pageId: string) {
   return data ?? [];
 }
 
+function resolveSeoImageUrl(value?: string | null): string | null {
+  const image = value?.trim();
+
+  if (!image || /[\s\\\u0000-\u001f\u007f]/.test(image)) {
+    return null;
+  }
+
+  try {
+    if (image.startsWith("/") && !image.startsWith("//")) {
+      return new URL(image, SITE_URL).href;
+    }
+
+    const url = new URL(image);
+
+    if (url.protocol !== "https:" || url.username || url.password) {
+      return null;
+    }
+
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { country } = await params;
   const page = await getCountryPage(country);
-  if (!page)
+
+  if (!page) {
     return {
       title: "Page Not Found | NextWave Build",
-      robots: { index: false, follow: false },
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
+  }
+
   const title =
-    page.seo_title || page.heading || `${page.name} | NextWave Build`;
-  const description = page.seo_description || page.description || "";
+    page.seo_title?.trim() ||
+    page.heading?.trim() ||
+    `${page.name} | NextWave Build`;
+
+  const description =
+    page.seo_description?.trim() || page.description?.trim() || "";
+
   const url = `${SITE_URL}/${page.slug}`;
+
+  const format = getCountryPageContentFormat(page.content);
+
+  const content =
+    format === "country_page_v3"
+      ? parseCountryPageContentV3(page.content)
+      : null;
+
+  const imageUrl = resolveSeoImageUrl(content?.heroImageUrl);
+
+  const imageAlt =
+    content?.heroImageAlt?.trim() || `${page.name} | NextWave Build`;
+
   return {
-    title,
+    title: {
+      absolute: title,
+    },
+
     description,
-    alternates: { canonical: url },
+
+    alternates: {
+      canonical: url,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+
     openGraph: {
       type: "website",
       title,
       description,
       url,
       siteName: "NextWave Build",
+
+      ...(imageUrl
+        ? {
+            images: [
+              {
+                url: imageUrl,
+                alt: imageAlt,
+              },
+            ],
+          }
+        : {}),
     },
-    twitter: { card: "summary", title, description },
+
+    twitter: {
+      card: imageUrl ? "summary_large_image" : "summary",
+      title,
+      description,
+
+      ...(imageUrl
+        ? {
+            images: [imageUrl],
+          }
+        : {}),
+    },
   };
 }
 
@@ -152,9 +241,30 @@ export default async function CountryLandingPage({ params }: Props) {
   const isCity = page.page_type === "CITY";
   const destinationLabel = isCity ? "City" : "Country";
 
+  const articles = await getCountryArticles(page.id);
+
+  const format = getCountryPageContentFormat(page.content);
+
+  if (format === "country_page_v3") {
+    const content = parseCountryPageContentV3(page.content);
+
+    const resources = await getPublicGeographicResources(
+      page.id,
+      page.country_id,
+    );
+
+    return (
+      <GeographicPageV3
+        page={page}
+        content={content}
+        resources={resources}
+        articles={articles}
+      />
+    );
+  }
+
   const content = parseCountryPageContent(page.content);
   const parsed = splitCountryBody(content.text);
-  const articles = await getCountryArticles(page.id);
 
   return (
     <main className="overflow-hidden bg-[#101214] text-white">
